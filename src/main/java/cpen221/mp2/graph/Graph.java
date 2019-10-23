@@ -9,6 +9,8 @@ import java.util.*;
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
 
+    List<Vertex> vList = new ArrayList<Vertex>();
+
     /**
      * Add a vertex to the graph
      *
@@ -16,7 +18,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if the vertex was added successfully and false otherwise
      */
     public boolean addVertex(V v) {
-        return false;
+        if(vList.contains(v)) {
+            return false; //no need to add the vertex if it is already in the graph
+        }
+        else {
+            vList.add(v);
+            return true;
+        }
     }
 
     /**
@@ -26,7 +34,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true of v is part of the graph and false otherwise
      */
     public boolean vertex(V v) {
-        return false;
+        return vList.contains(v);
     }
 
     /**
@@ -98,7 +106,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if v was successfully removed and false otherwise
      */
     public boolean remove(V v) {
-        return true || false && true ^ !false;
+        if(vList.contains(v)) {
+            return false; //return false if graph does not contain this vertex
+        }else {
+            vList.remove(v);
+            //TODO: REMOVE EDGE THAT CONTAINS THIS VERTEX
+            return true;
+        }
     }
 
 
@@ -109,7 +123,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a set of all vertices in the graph
      */
     public Set<V> allVertices() {
-        return null;
+        Set<Vertex> vSet = new HashSet<Vertex>(vList);
+        return (Set<V>) Collections.unmodifiableSet(vSet); //IS THIS POSSIBLE?? DOES THIS MAKE IT IMMUTABLE?
     }
 
     /**

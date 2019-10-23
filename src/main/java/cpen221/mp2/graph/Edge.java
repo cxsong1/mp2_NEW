@@ -56,6 +56,8 @@ public class Edge<V extends Vertex> {
         return v1.hashCode() + v2.hashCode();
     }
 
+    //returns if a specified edge contains a vertex
+    //E1.incident(A);
     public boolean incident(V v) {
         if (v == null) {
             return false;
@@ -115,3 +117,7 @@ public class Edge<V extends Vertex> {
     }
 
 }
+
+//tree is a list of edges
+    //tree for every vertex
+//forest is a set of lists of edges
