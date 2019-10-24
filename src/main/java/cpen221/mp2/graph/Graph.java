@@ -9,7 +9,13 @@ import java.util.*;
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
 
-    List<Vertex> vList = new ArrayList<Vertex>();
+    private List<Vertex> vList;
+    private Set<Edge> eList;
+
+    public Graph() {
+        vList = new ArrayList<Vertex>();
+        eList = new HashSet<Edge>();
+    }
 
     /**
      * Add a vertex to the graph
@@ -18,10 +24,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if the vertex was added successfully and false otherwise
      */
     public boolean addVertex(V v) {
-        if(vList.contains(v)) {
+        if (vList.contains(v)) {
             return false; //no need to add the vertex if it is already in the graph
-        }
-        else {
+        } else {
             vList.add(v);
             return true;
         }
@@ -44,7 +49,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if the edge was successfully added and false otherwise
      */
     public boolean addEdge(E e) {
-        return false;
+       if (eList.contains(e)) {
+           return false;
+       } else {
+           eList.add(e);
+           return true;
+       }
     }
 
     /**
@@ -54,7 +64,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if e is an edge in the graoh and false otherwise
      */
     public boolean edge(E e) {
-        return false;
+        return eList.contains(e);
     }
 
     /**
@@ -66,7 +76,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
 
     public boolean edge(V v1, V v2) {
-        return false;
+        return eList.contains(new Edge<V>(v1, v2));
     }
 
     /**
@@ -74,10 +84,20 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param v1 the first vertex of the edge
      * @param v2 the second vertex of the edge
-     * @return the length of the v1-v2 edge if this edge is part of the graph
+     * @return the length of the v1-v2 edge if this edge is part of the graph,
+     *         or -1 if the edge is not a part of the graph.
+     * //TODO: Ensure this is allowed ^^^
      */
     public int edgeLength(V v1, V v2) {
-        return 0;
+        Edge target = new Edge<V>(v1, v2);
+
+        for (Edge e : eList) {
+            if(e.equals(target)) {
+                return e.length();
+            }
+        }
+
+        return -1;
     }
 
     /**
@@ -86,7 +106,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return the sum of the lengths of all edges in the graph
      */
     public int edgeLengthSum() {
-        return 3_000_026;
+        int sum = 0;
+
+        for (Edge e : eList) {
+            sum += e.length();
+        }
+
+        return sum;
     }
 
     /**
@@ -96,7 +122,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if e was successfully removed and false otherwise
      */
     public boolean remove(E e) {
-        return false;
+        if (eList.contains(e)) {
+            // If the list contains e, remove it and return true.
+            eList.remove(e);
+            return true;
+        } else {
+            // Otherwise, return false to indicate it wasn't removed.
+            return false;
+        }
     }
 
     /**
@@ -106,9 +139,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if v was successfully removed and false otherwise
      */
     public boolean remove(V v) {
-        if(vList.contains(v)) {
+        if (vList.contains(v)) {
             return false; //return false if graph does not contain this vertex
-        }else {
+        } else {
             vList.remove(v);
             //TODO: REMOVE EDGE THAT CONTAINS THIS VERTEX
             return true;
@@ -124,7 +157,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     public Set<V> allVertices() {
         Set<Vertex> vSet = new HashSet<Vertex>(vList);
-        return (Set<V>) Collections.unmodifiableSet(vSet); //IS THIS POSSIBLE?? DOES THIS MAKE IT IMMUTABLE?
+        return (Set<V>) Collections.unmodifiableSet(vSet); //IS THIS POSSIBLE?? DOES THIS MAKE IT IMMUTABLE? (it doesn't -seth)
     }
 
     /**
