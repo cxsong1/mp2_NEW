@@ -74,7 +74,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param v2 the second vertex of the edge
      * @return true of the v1-v2 edge is part of the graph and false otherwise
      */
-
     public boolean edge(V v1, V v2) {
         return eSet.contains(new Edge<V>(v1, v2));
     }
@@ -142,7 +141,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     	Set<E> allESet;
     	allESet = allEdges(v);
 
-        if (vList.contains(v)) {
+        if (!vList.contains(v)) {
             return false; //return false if graph does not contain this vertex
         } else {
             vList.remove(v);
