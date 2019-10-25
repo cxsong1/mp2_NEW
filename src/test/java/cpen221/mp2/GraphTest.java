@@ -8,9 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class GraphTest {
-
-    @Test
-    public void testCreateGraph() {
+    public void createGraph() {
         Vertex v1 = new Vertex(1, "A");
         Vertex v2 = new Vertex(2, "B");
         Vertex v3 = new Vertex(3, "C");
@@ -29,10 +27,12 @@ public class GraphTest {
         g.addEdge(e2);
         g.addEdge(e3);
 
+        return g;
+
 //        assertEquals(e2, g.getEdge(v2, v3));
 //        assertEquals(21, g.pathLength(g.shortestPath(v3, v4)));
 //
-        assertEquals(g.edgeLength(v2, v3), 7);
+//        assertEquals(g.edgeLength(v2, v3), 7);
     }
 
 }
