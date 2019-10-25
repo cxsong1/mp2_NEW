@@ -139,17 +139,19 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if v was successfully removed and false otherwise
      */
     public boolean remove(V v) {
-
     	Set<E> allESet;
     	allESet = allEdges(v);
+
         if (vList.contains(v)) {
             return false; //return false if graph does not contain this vertex
         } else {
             vList.remove(v);
-            for(Edge currE:allESet) {
+
+            for (Edge currE : allESet) {
                 eSet.remove(currE); //Remove the edges asssociated with this vertex as well
             }
         }
+
         return true;
     }
 
@@ -173,17 +175,19 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return all edges incident on v
      */
     public Set<E> allEdges(V v) {
-    	Set<E> allESet = new HashSet<E>();
+        Set<E> allESet = new HashSet<E>();
 
-      Vertex otherVertex = new Vertex(0,"v1");
-      for(int i = 0; i<vList.size(); i++){
-          otherVertex = vList.get(i);
-          Edge edge = new Edge(otherVertex,v);
-          if(eSet.contains(edge)) {
-              allESet.add((E)edge);
-          }
-      }
-      return(Set<E>)Collections.unmodifiableSet(allESet);
+        Vertex otherVertex;
+
+        for(int i = 0; i<vList.size(); i++){
+            otherVertex = vList.get(i);
+            Edge edge = new Edge(otherVertex,v);
+            if(eSet.contains(edge)) {
+                allESet.add((E)edge);
+            }
+        }
+
+        return(Set<E>)Collections.unmodifiableSet(allESet);
     }
 
     /**
@@ -204,20 +208,21 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a map containing each vertex w that neighbors v and the edge between v and w.
      */
     public Map<V, E> getNeighbours(V v) {
-    	Vertex currV = new Vertex (0,"v1");
+    	Vertex currV;
 
-      Map<V,E> neighbours = new HashMap<V,E>();
-      Set<E> edges;
-      edges = allEdges(v);
+        Map<V,E> neighbours = new HashMap<V,E>();
+        Set<E> edges;
+        edges = allEdges(v);
 
-      for(int i = 0; i<vList.size(); i++) {
-	      currV = vList.get(i);
-	      Edge currE = new Edge(currV, v);
-	      if (edges.contains(currE)) {
-		      neighbours.put((V)currV, (E)currE);
-	      }
-      }
-      return neighbours;
+        for (int i = 0; i < vList.size(); i++) {
+                currV = vList.get(i);
+                Edge currE = new Edge(currV, v);
+                if (edges.contains(currE)) {
+          	      neighbours.put((V)currV, (E)currE);
+                }
+        }
+
+        return neighbours;
     }
 
     /**
