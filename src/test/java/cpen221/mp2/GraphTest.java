@@ -4,6 +4,7 @@ import cpen221.mp2.graph.Edge;
 import cpen221.mp2.graph.Graph;
 import cpen221.mp2.graph.Vertex;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -61,10 +62,96 @@ public class GraphTest {
         return g2;
     }
 
+	 /** testAddVertex()
+	 * Test addVertex by adding:
+	 * 1) a new vertex
+	 * 2) an existing vertex in the graph
+	 * return: True, False
+	 */
+    @Test
+	  public void testAddVertex(){
+    	Graph g = createGraph1();
+	    Vertex v6 = new Vertex(6, "Horseradish actually sucks");
+	    Vertex v1 = new Vertex(1, "A");
 
-//        assertEquals(e2, g.getEdge(v2, v3));
-//        assertEquals(21, g.pathLength(g.shortestPath(v3, v4)));
-//
-//        assertEquals(g.edgeLength(v2, v3), 7);
+	    assertTrue(g.addVertex(v6));
+	    assertFalse(g.addVertex(v1));
     }
+
+	/** testAddEdge()
+	 * Test addEdge by adding:
+	 * 1) a new vertex
+	 * 2) an existing vertex in the graph
+	 * return: True, False
+	 */
+	@Test
+	public void testAddEdge(){
+		Graph g = createGraph1();
+		Vertex v6 = new Vertex(6, "Horseradish actually sucks");
+		Vertex v1 = new Vertex(1, "A");
+
+		assertTrue(g.addVertex(v6));
+		assertFalse(g.addVertex(v1));
+	}
+
+	/** testRemove1()
+	 * Test remove by removing:
+	 * 1) a vertex not on the graph
+	 * 2) an existing vertex in the graph
+	 *      this should also remove the edges containing that vertex as well
+	 */
+	@Test
+	public void testRemove1(){
+		Graph g = createGraph1();
+		Vertex v6 = new Vertex(6, "Horseradish actually sucks");
+		Vertex v1 = new Vertex(1, "A");
+		Vertex v2 = new Vertex(2, "B");
+		Vertex v4 = new Vertex(4, "D");
+
+		Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+		Edge<Vertex> e3 = new Edge<>(v1, v4, 9);
+
+		assertFalse(g.remove(v6));
+		assertTrue(g.remove(v1));
+		assertFalse(g.edge(e1));
+		assertFalse(g.edge(e3));
+	}
+
+	/** testRemove2()
+	 * Test remove by removing:
+	 * 1) a vertex not on the graph
+	 * 2) an existing vertex in the graph
+	 *      this should also remove the edges containing that vertex as well
+	 */
+	@Test
+	public void testRemove2(){
+		Graph g = createGraph2();
+
+		assertFalse(g.remove(v6));
+		assertTrue(g.remove(v1));
+		assertFalse(g.edge(e1));
+		assertFalse(g.edge(e3));
+	}
+
+	/** testRemove3()
+	 * Test remove by removing:
+	 * 1) an edge not on the graph
+	 * 2) an existing edge in the graph
+	 * return: True, False
+	 */
+	@Test
+	public void testRemove3(){
+		Graph g = createGraph1();
+		Vertex v6 = new Vertex(6, "Horseradish actually sucks");
+		Vertex v1 = new Vertex(1, "A");
+		Vertex v2 = new Vertex(2, "B");
+
+		Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+		Edge<Vertex> e6 = new Edge<>(v1, v6, 9);
+
+		assertFalse(g.remove(e6));
+		assertTrue(g.remove(e1));
+	}
+
+}
 

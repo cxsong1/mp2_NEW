@@ -127,7 +127,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             eSet.remove(e);
             return true;
         } else {
-            // Otherwise, return false to indicate it wasn't removed.
+            // Otherwise, return false to indicate it wasn't removed since it does not exist.
             return false;
         }
     }
@@ -142,13 +142,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     	Set<E> allESet;
     	allESet = allEdges(v);
 
-        if (vList.contains(v)) {
+        if (!vList.contains(v)) {
             return false; //return false if graph does not contain this vertex
         } else {
             vList.remove(v);
 
             for (Edge currE : allESet) {
-                eSet.remove(currE); //Remove the edges asssociated with this vertex as well
+                eSet.remove(currE); //Remove the edges associated with this vertex as well
             }
         }
 
@@ -181,6 +181,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
         for(int i = 0; i<vList.size(); i++){
             otherVertex = vList.get(i);
+            if(otherVertex.equals(v)) {
+                continue;
+            }
             Edge edge = new Edge(otherVertex,v);
             if(eSet.contains(edge)) {
                 allESet.add((E)edge);
