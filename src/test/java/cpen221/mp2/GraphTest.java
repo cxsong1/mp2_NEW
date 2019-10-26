@@ -363,5 +363,12 @@ public class GraphTest {
 
         assertEquals(3, mst.size());
         assertTrue(mst.contains(e1));
+        
+        int length = 0;
+        for (Edge e : mst) {
+            length += e.length();
+        }
+
+        assertEquals(length, 12);
     }
 }
