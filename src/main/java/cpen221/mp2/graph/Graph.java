@@ -8,7 +8,6 @@ import java.util.*;
  * @param <V> represents a vertex type
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
-
     private List<V> vList;
     private Set<E> eSet;
 
@@ -126,7 +125,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             eSet.remove(e);
             return true;
         } else {
-            // Otherwise, return false to indicate it wasn't removed.
+            // Otherwise, return false to indicate it wasn't removed since it does not exist.
             return false;
         }
     }
@@ -147,7 +146,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             vList.remove(v);
 
             for (Edge currE : allESet) {
-                eSet.remove(currE); //Remove the edges asssociated with this vertex as well
+                eSet.remove(currE); //Remove the edges associated with this vertex as well
             }
         }
 
@@ -163,7 +162,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     public Set<V> allVertices() {
         Set<Vertex> vSet = new HashSet<Vertex>(vList);
-        return (Set<V>) Collections.unmodifiableSet(vSet); //IS THIS POSSIBLE?? DOES THIS MAKE IT IMMUTABLE? (it doesn't -seth)
+        return (Set<V>) vSet;
     }
 
     /**
@@ -180,6 +179,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
         for(int i = 0; i<vList.size(); i++){
             otherVertex = vList.get(i);
+            if(otherVertex.equals(v)) {
+                continue;
+            }
             Edge edge = new Edge(otherVertex,v);
             if(eSet.contains(edge)) {
                 allESet.add((E)edge);
@@ -215,6 +217,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
         for (int i = 0; i < vList.size(); i++) {
                 currV = vList.get(i);
+
+                if(v.equals(currV)) {
+                    continue;
+                }
+
                 Edge currE = new Edge(currV, v);
                 if (edges.contains(currE)) {
           	      neighbours.put((V)currV, (E)currE);
@@ -242,6 +249,64 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a list of edges that forms a minimum spanning tree of the graph
      */
     public List<E> minimumSpanningTree() {
+        Set<Set<V>> forest = new HashSet<Set<V>>();
+        Set<E> pool = new HashSet<>();
+        List<E> used = new ArrayList<E>();
+
+        pool.addAll(eSet);
+
+        for (V v : vList) {
+            Set<V> tree = new HashSet<>();
+            tree.add(v);
+            forest.add(tree);
+        }
+
+        while (forest.size() > 1) {
+            int shortest = 0;
+            E shortestEdge = null;
+
+            // This finds the shortest edge that connects two trees,
+            // while also removing edges that are in the same container.
+            for (E e : pool) {
+                Set<V> container1 = getContainer(forest, e.v1());
+                Set<V> container2 = getContainer(forest, e.v2());
+
+                if (container1.equals(container2)) {
+                    pool.remove(e);
+                    continue;
+                } else {
+                    if (e.length() < shortest || shortestEdge == null) {
+                        shortest = e.length();
+                        shortestEdge = e;
+                    }
+                }
+            }
+
+            used.add(shortestEdge);
+            pool.remove(shortestEdge);
+
+            // we have to combine the sets containing the endpoints of this edge
+            Set<V> mergedTree = getContainer(forest, shortestEdge.v1());
+            Set<V> oldTree = getContainer(forest, shortestEdge.v2());
+
+            for (V v : oldTree) {
+                mergedTree.add(v);
+            }
+
+            // Now remove the old one
+            forest.remove(oldTree);
+        }
+
+        return used;
+    }
+
+    private Set<V> getContainer(Set<Set<V>> containerSet, V vertex) {
+        for (Set<V> container : containerSet) {
+            if (container.contains(vertex)) {
+                return container;
+            }
+        }
+
         return null;
     }
 

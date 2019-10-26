@@ -4,6 +4,9 @@ import cpen221.mp2.graph.Edge;
 import cpen221.mp2.graph.Graph;
 import cpen221.mp2.graph.Vertex;
 import org.junit.Test;
+import java.util.Set;
+import java.util.Map;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -59,6 +62,34 @@ public class GraphTest {
         g2.addEdge(e3);
 
         return g2;
+    }
+
+    public Graph<Vertex, Edge<Vertex>> createGraph3() {
+        Vertex v1 = new Vertex(1, "a");
+        Vertex v2 = new Vertex(2, "a");
+        Vertex v3 = new Vertex(3, "a");
+        Vertex v4 = new Vertex(4, "a");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 10);
+        Edge<Vertex> e2 = new Edge<>(v1, v3, 10);
+        Edge<Vertex> e3 = new Edge<>(v2, v3, 1);
+        Edge<Vertex> e4 = new Edge<>(v3, v4, 1);
+        Edge<Vertex> e5 = new Edge<>(v1, v4, 20);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+
+        return g;
     }
 
     /**
@@ -131,11 +162,206 @@ public class GraphTest {
     }
     
     @Test
-    public void testAllEdges() {
+    public void testAllEdges1() {
         Graph g = createGraph1();
 
         Set<Edge> edges = g.allEdges();
 
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
+        Vertex v4 = new Vertex(4, "D");
 
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+        Edge<Vertex> e2 = new Edge<>(v2, v3, 7);
+        Edge<Vertex> e3 = new Edge<>(v1, v4, 9);
+
+        assertTrue(edges.contains(e1));
+        assertTrue(edges.contains(e2));
+        assertTrue(edges.contains(e3));
+        assertEquals(3, edges.size());
+    }
+
+    @Test
+    public void testAllEdges2() {
+        Graph g = createGraph1();
+
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
+        Vertex v4 = new Vertex(4, "D");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+        Edge<Vertex> e2 = new Edge<>(v2, v3, 7);
+        Edge<Vertex> e3 = new Edge<>(v1, v4, 9);
+
+        Set<Edge> edges = g.allEdges(v2);
+
+        assertTrue(edges.contains(e1));
+        assertTrue(edges.contains(e2));
+        assertFalse(edges.contains(e3));
+        assertEquals(2, edges.size());
+    }
+
+    @Test
+    public void testAllVertices() {
+        Graph g = createGraph1();
+
+        Set<Vertex> vert = g.allVertices();
+
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
+        Vertex v4 = new Vertex(4, "D");
+
+        assertTrue(vert.contains(v1));
+        assertTrue(vert.contains(v2));
+        assertTrue(vert.contains(v3));
+        assertTrue(vert.contains(v4));
+        assertEquals(4, vert.size());
+    }
+
+    @Test
+    public void testGetNeighbours() {
+        Graph g = createGraph1();
+
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
+        Vertex v4 = new Vertex(4, "D");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+        Edge<Vertex> e2 = new Edge<>(v2, v3, 7);
+        Edge<Vertex> e3 = new Edge<>(v1, v4, 9);
+
+        Map<Vertex, Edge> n = g.getNeighbours(v1);
+
+        assertEquals(e1, n.get(v2));
+        assertEquals(e3, n.get(v4));
+        assertEquals(2, n.size());
+    }
+
+    /** testAddVertex()
+    * Test addVertex by adding:
+    * 1) a new vertex
+    * 2) an existing vertex in the graph
+    * return: True, False
+    */
+    @Test
+    public void testAddVertex(){
+        Graph g = createGraph1();
+        Vertex v6 = new Vertex(6, "Horseradish actually sucks");
+        Vertex v1 = new Vertex(1, "A");
+
+        assertTrue(g.addVertex(v6));
+        assertFalse(g.addVertex(v1));
+    }
+
+    /** testAddEdge()
+     * Test addEdge by adding:
+     * 1) a new vertex
+     * 2) an existing vertex in the graph
+     * return: True, False
+     */
+    @Test
+    public void testAddEdge(){
+        Graph g = createGraph1();
+        Vertex v6 = new Vertex(6, "Horseradish actually sucks");
+        Vertex v1 = new Vertex(1, "A");
+
+        assertTrue(g.addVertex(v6));
+        assertFalse(g.addVertex(v1));
+    }
+
+    /** testRemove1()
+     * Test remove by removing:
+     * 1) a vertex not on the graph
+     * 2) an existing vertex in the graph
+     *      this should also remove the edges containing that vertex as well
+     */
+    @Test
+    public void testRemove1(){
+        Graph g = createGraph1();
+        Vertex v6 = new Vertex(6, "Horseradish actually sucks");
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v4 = new Vertex(4, "D");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+        Edge<Vertex> e3 = new Edge<>(v1, v4, 9);
+
+        assertFalse(g.remove(v6));
+        assertTrue(g.remove(v1));
+        assertFalse(g.edge(e1));
+        assertFalse(g.edge(e3));
+    }
+
+    /** testRemove2()
+     * Test remove by removing:
+     * 1) a vertex not on the graph
+     * 2) an existing vertex in the graph
+     *      this should also remove the edges containing that vertex as well
+     */
+    @Test
+    public void testRemove2(){
+        Graph g = createGraph2();
+
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
+        Vertex v4 = new Vertex(4, "D");
+        Vertex v5 = new Vertex(5, "E");
+        Vertex v6 = new Vertex(6, "F");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+        Edge<Vertex> e2 = new Edge<>(v2, v3, 7);
+        Edge<Vertex> e3 = new Edge<>(v1, v4, 9);
+        Edge<Vertex> e4 = new Edge<>(v1, v5, 6);
+        Edge<Vertex> e5 = new Edge<>(v2, v6, 3);
+
+        assertFalse(g.remove(v6));
+        assertTrue(g.remove(v1));
+        assertFalse(g.edge(e1));
+        assertFalse(g.edge(e3));
+    }
+
+    /** testRemove3()
+     * Test remove by removing:
+     * 1) an edge not on the graph
+     * 2) an existing edge in the graph
+     * return: True, False
+     */
+    @Test
+    public void testRemove3(){
+        Graph g = createGraph1();
+        Vertex v6 = new Vertex(6, "My name is claire, and I love horseradish");
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+        Edge<Vertex> e6 = new Edge<>(v1, v6, 9);
+
+        assertFalse(g.remove(e6));
+        assertTrue(g.remove(e1));
+    }
+
+    public void testMST() {
+        Graph g = createGraph3();
+
+        Vertex v1 = new Vertex(1, "a");
+        Vertex v2 = new Vertex(2, "a");
+        Vertex v3 = new Vertex(3, "a");
+        Vertex v4 = new Vertex(4, "a");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 10);
+        Edge<Vertex> e2 = new Edge<>(v1, v3, 10);
+        Edge<Vertex> e3 = new Edge<>(v2, v3, 1);
+        Edge<Vertex> e4 = new Edge<>(v3, v4, 1);
+        Edge<Vertex> e5 = new Edge<>(v1, v4, 20);
+        
+        List<Edge> mst = g.minimumSpanningTree();
+
+        assertEquals(3, mst.size());
+        assertTrue(mst.contains(e1));
     }
 }
