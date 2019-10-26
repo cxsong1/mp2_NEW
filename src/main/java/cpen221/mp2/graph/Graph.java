@@ -249,14 +249,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a list of edges that forms a minimum spanning tree of the graph
      */
     public List<E> minimumSpanningTree() {
-        Set<Set<V>> forest = new HashSet<Set<V>>();
+        List<List<V>> forest = new ArrayList<List<V>>();
         Set<E> pool = new HashSet<>();
         List<E> used = new ArrayList<E>();
 
         pool.addAll(eSet);
 
         for (V v : vList) {
-            Set<V> tree = new HashSet<>();
+            List<V> tree = new ArrayList<>();
             tree.add(v);
             forest.add(tree);
         }
@@ -267,12 +267,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
             // This finds the shortest edge that connects two trees,
             // while also removing edges that are in the same container.
+            Set<E> removable = new HashSet<E>();
             for (E e : pool) {
-                Set<V> container1 = getContainer(forest, e.v1());
-                Set<V> container2 = getContainer(forest, e.v2());
+                List<V> container1 = getContainer(forest, e.v1());
+                List<V> container2 = getContainer(forest, e.v2());
 
                 if (container1.equals(container2)) {
-                    pool.remove(e);
+                    removable.add(e);
                     continue;
                 } else {
                     if (e.length() < shortest || shortestEdge == null) {
@@ -282,26 +283,32 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                 }
             }
 
+            for (E e : removable) {
+                pool.remove(e);
+            }
+
             used.add(shortestEdge);
             pool.remove(shortestEdge);
 
             // we have to combine the sets containing the endpoints of this edge
-            Set<V> mergedTree = getContainer(forest, shortestEdge.v1());
-            Set<V> oldTree = getContainer(forest, shortestEdge.v2());
+            List<V> mergedTree = getContainer(forest, shortestEdge.v1());
+            List<V> oldTree = getContainer(forest, shortestEdge.v2());
 
             for (V v : oldTree) {
                 mergedTree.add(v);
             }
 
             // Now remove the old one
+            System.out.println(forest.size());
+            System.out.println(forest.contains(oldTree));
             forest.remove(oldTree);
         }
 
         return used;
     }
 
-    private Set<V> getContainer(Set<Set<V>> containerSet, V vertex) {
-        for (Set<V> container : containerSet) {
+    private List<V> getContainer(List<List<V>> containerSet, V vertex) {
+        for (List<V> container : containerSet) {
             if (container.contains(vertex)) {
                 return container;
             }

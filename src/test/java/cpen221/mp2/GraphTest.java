@@ -345,6 +345,7 @@ public class GraphTest {
         assertTrue(g.remove(e1));
     }
 
+    @Test
     public void testMST() {
         Graph g = createGraph3();
 
