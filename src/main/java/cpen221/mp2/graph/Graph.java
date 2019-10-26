@@ -299,8 +299,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             }
 
             // Now remove the old one
-            System.out.println(forest.size());
-            System.out.println(forest.contains(oldTree));
             forest.remove(oldTree);
         }
 
