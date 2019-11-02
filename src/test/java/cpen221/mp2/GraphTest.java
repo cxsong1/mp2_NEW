@@ -4,6 +4,8 @@ import cpen221.mp2.graph.Edge;
 import cpen221.mp2.graph.Graph;
 import cpen221.mp2.graph.Vertex;
 import org.junit.Test;
+
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.Map;
 import java.util.List;
@@ -88,6 +90,55 @@ public class GraphTest {
         g.addEdge(e3);
         g.addEdge(e4);
         g.addEdge(e5);
+
+        return g;
+    }
+
+    //graph used to test shortest path
+    public Graph<Vertex, Edge<Vertex>> createGraph4() {
+        Vertex A = new Vertex(1, "A");
+        Vertex B = new Vertex(2, "B");
+        Vertex C = new Vertex(3, "C");
+        Vertex D = new Vertex(4, "D");
+        Vertex E = new Vertex(5, "E");
+        Vertex F = new Vertex(6, "F");
+        Vertex G = new Vertex(7, "G");
+
+        Edge<Vertex> e1 = new Edge<>(A,B, 4);
+        Edge<Vertex> e2 = new Edge<>(B,D,5);
+        Edge<Vertex> e3 = new Edge<>(B,C,6);
+        Edge<Vertex> e4 = new Edge<>(C,D,11);
+        Edge<Vertex> e5 = new Edge<>(A,C,3);
+        Edge<Vertex> e6 = new Edge<>(C,E,8);
+        Edge<Vertex> e7 = new Edge<>(A,E,7);
+        Edge<Vertex> e8 = new Edge<>(D,E,2);
+        Edge<Vertex> e9 = new Edge<>(D,F,2);
+        Edge<Vertex> e10 = new Edge<>(F,G,3);
+        Edge<Vertex> e11 = new Edge<>(D,G,10);
+        Edge<Vertex> e12 = new Edge<>(E,G,5);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+
+        g.addVertex(A);
+        g.addVertex(B);
+        g.addVertex(C);
+        g.addVertex(D);
+        g.addVertex(E);
+        g.addVertex(F);
+        g.addVertex(G);
+
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+        g.addEdge(e6);
+        g.addEdge(e7);
+        g.addEdge(e8);
+        g.addEdge(e9);
+        g.addEdge(e10);
+        g.addEdge(e11);
+        g.addEdge(e12);
 
         return g;
     }
@@ -371,5 +422,24 @@ public class GraphTest {
         }
 
         assertEquals(length, 12);
+    }
+
+    @Test
+    public void testShortestPath(){
+        Graph<Vertex, Edge<Vertex>> g = createGraph4();
+        LinkedList<Vertex> path = new LinkedList<>();
+
+        Vertex A = new Vertex(1, "A");
+        Vertex B = new Vertex(2, "B");
+        Vertex D = new Vertex(4, "D");
+        Vertex F = new Vertex(6, "F");
+
+        path.add(A);
+        path.add(B);
+        path.add(D);
+        path.add(F);
+
+        assertEquals(path, g.shortestPath(A,F));
+
     }
 }
