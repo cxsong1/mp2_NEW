@@ -9,11 +9,11 @@ import java.util.*;
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
     private List<V> vList;
-    private Set<E> eSet;
+    private List<E> eList;
 
     public Graph() {
         vList = new ArrayList<V>();
-        eSet = new HashSet<E>();
+        eList = new ArrayList<E>();
     }
 
     /**
@@ -48,10 +48,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if the edge was successfully added and false otherwise
      */
     public boolean addEdge(E e) {
-       if (eSet.contains(e)) {
+       if (eList.contains(e)) {
            return false;
        } else {
-           eSet.add(e);
+           eList.add(e);
            return true;
        }
     }
@@ -63,7 +63,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if e is an edge in the graoh and false otherwise
      */
     public boolean edge(E e) {
-        return eSet.contains(e);
+        return eList.contains(e);
     }
 
     /**
@@ -74,7 +74,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true of the v1-v2 edge is part of the graph and false otherwise
      */
     public boolean edge(V v1, V v2) {
-        return eSet.contains(new Edge<V>(v1, v2));
+        return eList.contains(new Edge<V>(v1, v2));
     }
 
     /**
@@ -89,7 +89,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public int edgeLength(V v1, V v2) {
         Edge target = new Edge<V>(v1, v2);
 
-        for (Edge e : eSet) {
+        for (Edge e : eList) {
             if(e.equals(target)) {
                 return e.length();
             }
@@ -106,7 +106,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public int edgeLengthSum() {
         int sum = 0;
 
-        for (Edge e : eSet) {
+        for (Edge e : eList) {
             sum += e.length();
         }
 
@@ -120,9 +120,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true if e was successfully removed and false otherwise
      */
     public boolean remove(E e) {
-        if (eSet.contains(e)) {
+        if (eList.contains(e)) {
             // If the list contains e, remove it and return true.
-            eSet.remove(e);
+            eList.remove(e);
             return true;
         } else {
             // Otherwise, return false to indicate it wasn't removed since it does not exist.
@@ -146,7 +146,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             vList.remove(v);
 
             for (Edge currE : allESet) {
-                eSet.remove(currE); //Remove the edges associated with this vertex as well
+                eList.remove(currE); //Remove the edges associated with this vertex as well
             }
         }
 
@@ -182,13 +182,15 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             if(otherVertex.equals(v)) {
                 continue;
             }
+
             Edge edge = new Edge(otherVertex,v);
-            if(eSet.contains(edge)) {
-                allESet.add((E)edge);
+            int index = eList.indexOf(edge);
+            if(index != -1) {
+                allESet.add(eList.get(index));
             }
         }
 
-        return(Set<E>)Collections.unmodifiableSet(allESet);
+        return allESet;
     }
 
     /**
@@ -198,7 +200,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return all edges in the graph
      */
     public Set<E> allEdges() {
-    	return (Set<E>) Set.copyOf(eSet);
+    	return new HashSet<E>(eList);
     }
 
     /**
@@ -209,11 +211,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a map containing each vertex w that neighbors v and the edge between v and w.
      */
     public Map<V, E> getNeighbours(V v) {
-    	Vertex currV;
+        Vertex currV;
 
         Map<V,E> neighbours = new HashMap<V,E>();
-        Set<E> edges;
-        edges = allEdges(v);
+        List<E> edges;
+        edges = new ArrayList<E>(allEdges(v));
 
         for (int i = 0; i < vList.size(); i++) {
                 currV = vList.get(i);
@@ -223,8 +225,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                 }
 
                 Edge currE = new Edge(currV, v);
-                if (edges.contains(currE)) {
-          	      neighbours.put((V)currV, (E)currE);
+                int index = edges.indexOf(currE);
+                if (index != -1) {
+                    neighbours.put((V)currV, edges.get(index));
                 }
         }
 
@@ -323,7 +326,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         Set<E> pool = new HashSet<>();
         List<E> used = new ArrayList<E>();
 
-        pool.addAll(eSet);
+        pool.addAll(eList);
 
         for (V v : vList) {
             List<V> tree = new ArrayList<>();

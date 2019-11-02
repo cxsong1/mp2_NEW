@@ -440,6 +440,5 @@ public class GraphTest {
         path.add(F);
 
         assertEquals(path, g.shortestPath(A,F));
-
     }
 }
