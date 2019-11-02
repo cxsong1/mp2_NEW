@@ -239,7 +239,77 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return the vertices, in order, on the shortest path from source to sink (both end points are part of the list)
      */
     public List<V> shortestPath(V source, V sink) {
-        return null;
+        V current = source;
+        // Key is next vertex, value is the one it was branched to from
+        HashMap<V, V> visited = new HashMap<>();
+        HashMap<V, Integer> vertexLengths = new HashMap<>();
+
+        // This dummy vertex is only used when checking if a
+        // vertex has been visited. Obviously, the source must
+        // have been visited.
+        visited.put(source, source);
+
+        // Each vertex should be initialized with an infinite distance estimate.
+        // However, we use negative one as a way to represent that.
+        for (V v : allVertices()) {
+            vertexLengths.put(v, -1);
+        }
+
+        // This loop iterates until we find a path that connects us to the sink.
+        while (current != sink) {
+            Map<V, E> neighbourhood = getNeighbours(current);
+
+            // For each vertex we haven't yet traversed, compute
+            // a preliminary distance estimate, and update if it is
+            // better than the current value.
+            for (V v : neighbourhood.keySet()) {
+                if (!visited.containsKey(v)) {
+                    int possibleLength = vertexLengths.get(current) + neighbourhood.get(v).length();
+                    int currentLength = vertexLengths.get(v);
+
+                    if (possibleLength < currentLength || currentLength == -1) {
+                        vertexLengths.put(v, possibleLength);
+                    }
+                }
+            }
+
+            V closest = null;
+            // The starting value of shortestLength doesn't matter - it will be overridden
+            // if closest is null anyway.
+            int shortestLength = -1;
+
+            // Find the neighbour vertex with the smallest distance from the source.
+            for (V v : allVertices()) {
+                int length = vertexLengths.get(v);
+
+                if (length == -1) {
+                    continue;
+                }
+
+                if (closest == null || shortestLength > length) {
+                    closest = v;
+                    shortestLength = length;
+                }
+            }
+
+            visited.put(closest, current);
+
+            // Now, we run the loop again, but we consider our next vertex.
+            current = closest;
+        }
+
+        current = sink;
+        LinkedList<V> path = new LinkedList<>();
+
+        // Reconstruct the path by reversing the visited map
+        while (current != source) {
+            path.addFirst(current);
+            current = visited.get(current);
+        }
+
+        path.addFirst(source);
+
+        return path;
     }
 
     /**
