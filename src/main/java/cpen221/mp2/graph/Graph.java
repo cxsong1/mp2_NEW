@@ -255,8 +255,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         // Each vertex should be initialized with an infinite distance estimate.
         // However, we use negative one as a way to represent that.
         for (V v : allVertices()) {
-            vertexLengths.put(v, -1);
+            if(v.equals(source))
+                vertexLengths.put(v,0);
+            else
+                vertexLengths.put(v, -1);
         }
+
 
         // This loop iterates until we find a path that connects us to the sink.
         while (current != sink) {
@@ -282,12 +286,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             int shortestLength = -1;
 
             // Find the neighbour vertex with the smallest distance from the source.
-            for (V v : allVertices()) {
-                int length = vertexLengths.get(v);
-
-                if (length == -1) {
+            for (V v : neighbourhood.keySet()) {
+                if(visited.containsKey(v)) {
                     continue;
                 }
+
+                int length = vertexLengths.get(v);
 
                 if (closest == null || shortestLength > length) {
                     closest = v;
