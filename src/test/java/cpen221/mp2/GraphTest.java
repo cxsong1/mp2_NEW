@@ -441,4 +441,15 @@ public class GraphTest {
 
         assertEquals(path, g.shortestPath(A,F));
     }
+
+    @Test
+    public void testDiameter() {
+        Graph g = createGraph4();
+        Vertex A = new Vertex(1, "A");
+        Vertex B = new Vertex(2, "B");
+        Vertex D = new Vertex(4, "D");
+        Vertex F = new Vertex(6, "F");
+
+        System.out.println(g.diameter());
+    }
 }

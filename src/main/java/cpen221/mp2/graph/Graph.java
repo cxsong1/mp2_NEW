@@ -407,6 +407,15 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return the length of path
      */
     public int pathLength(List<V> path) {
+        //TODO: Test me
+        V last = path.get(0);
+        int accumulator = 0;
+
+        for (int i = 1; i < path.size(); i++) {
+            accumulator += getEdge(last, path.get(i)).length();
+            last = path.get(i);
+        }
+
         return 0;
     }
 
@@ -432,7 +441,23 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return the diameter of the graph.
      */
     public int diameter() {
-        return 0;
+        int maxd = 0;
+        for (V v1 : allVertices()) {
+            for (V v2 : allVertices()) {
+                if (v1.equals(v2)) {
+                    continue;
+                }
+
+                System.out.println("Computing length for verticies " + v1.name() + " and " + v2.name());
+
+                // int length = pathLength(shortestPath(v1, v2));
+                if (1 > maxd) {
+                    maxd = 1;
+                }
+            }
+        }
+
+        return maxd;
     }
 
     /**
