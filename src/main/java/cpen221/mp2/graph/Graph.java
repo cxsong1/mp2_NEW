@@ -416,7 +416,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             last = path.get(i);
         }
 
-        return 0;
+        return accumulator;
     }
 
     /**
