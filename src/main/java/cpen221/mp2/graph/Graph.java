@@ -243,14 +243,17 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     public List<V> shortestPath(V source, V sink) {
         V current = source;
-        // Key is next vertex, value is the one it was branched to from
-        HashMap<V, V> visited = new HashMap<>();
+        Set<V> visited = new HashSet<>();
         HashMap<V, Integer> vertexLengths = new HashMap<>();
+        // When a new preliminary weight is calculated, this hashmap
+        // will store the vertex that gave it that weight as a value, and
+        // itself as a key. This makes reverse iteration easy.
+        HashMap<V, V> lengthSources = new HashMap<>();
 
         // This dummy vertex is only used when checking if a
         // vertex has been visited. Obviously, the source must
         // have been visited.
-        visited.put(source, source);
+        visited.add(source);
 
         // Each vertex should be initialized with an infinite distance estimate.
         // However, we use negative one as a way to represent that.
@@ -263,19 +266,20 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
 
         // This loop iterates until we find a path that connects us to the sink.
-        while (current != sink) {
+        while (!current.equals(sink)) {
             Map<V, E> neighbourhood = getNeighbours(current);
 
             // For each vertex we haven't yet traversed, compute
             // a preliminary distance estimate, and update if it is
             // better than the current value.
             for (V v : neighbourhood.keySet()) {
-                if (!visited.containsKey(v)) {
+                if (!visited.contains(v)) {
                     int possibleLength = vertexLengths.get(current) + neighbourhood.get(v).length();
                     int currentLength = vertexLengths.get(v);
 
                     if (possibleLength < currentLength || currentLength == -1) {
                         vertexLengths.put(v, possibleLength);
+                        lengthSources.put(v, current);
                     }
                 }
             }
@@ -286,12 +290,16 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             int shortestLength = -1;
 
             // Find the neighbour vertex with the smallest distance from the source.
-            for (V v : neighbourhood.keySet()) {
-                if(visited.containsKey(v)) {
+            for (V v : allVertices()) {
+                if(visited.contains(v)) {
                     continue;
                 }
 
                 int length = vertexLengths.get(v);
+
+                if (length == -1) {
+                    continue;
+                }
 
                 if (closest == null || shortestLength > length) {
                     closest = v;
@@ -299,7 +307,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                 }
             }
 
-            visited.put(closest, current);
+            visited.add(closest);
 
             // Now, we run the loop again, but we consider our next vertex.
             current = closest;
@@ -311,7 +319,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         // Reconstruct the path by reversing the visited map
         while (current != source) {
             path.addFirst(current);
-            current = visited.get(current);
+            current = lengthSources.get(current);
         }
 
         path.addFirst(source);
