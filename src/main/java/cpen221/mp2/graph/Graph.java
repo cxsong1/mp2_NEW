@@ -450,8 +450,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
                 System.out.println("Computing length for verticies " + v1.name() + " and " + v2.name());
 
-                // int length = pathLength(shortestPath(v1, v2));
-                if (1 > maxd) {
+                int length = pathLength(shortestPath(v1, v2));
+                if (length > maxd) {
                     maxd = 1;
                 }
             }
