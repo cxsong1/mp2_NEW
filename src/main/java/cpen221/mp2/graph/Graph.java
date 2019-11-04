@@ -452,7 +452,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
                 int length = pathLength(shortestPath(v1, v2));
                 if (length > maxd) {
-                    maxd = 1;
+                    maxd = length;
                 }
             }
         }
@@ -467,9 +467,16 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param v1 one end of the edge
      * @param v2 the other end of the edge
      * @return the edge connecting v1 and v2
+     *         if edge does not exist, then return null
      */
     public E getEdge(V v1, V v2) {
-        return null;
+        List<E> edgeList = new ArrayList<>(allEdges(v1));
+        Edge<Vertex> edge = new Edge<>(v1, v2);
+
+        int index = edgeList.indexOf(edge);
+        if(index!=-1)
+        	return edgeList.get(index);
+				return null;
     }
     
     //// add all new code above this line ////
