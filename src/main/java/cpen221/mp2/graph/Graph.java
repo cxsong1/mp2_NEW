@@ -495,6 +495,20 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
         // Once the loop above terminates, we know that each graph fragment has been
         // given an id.
+
+        // Create and initialize enough empty sets to store each graph.
+        List<Set<V>> distinctGraphs = new ArrayList<Set<V>>();
+        for (int i = 0; i <= currentGraph; i++) {
+            distinctGraphs.add(new HashSet<V>());
+        }
+
+        for (V v : allVertices()) {
+            // Separate the graphmap into subgraphs.
+            distinctGraphs.get(graphmap.get(v)).put(v);
+        }
+
+        // The index information in the list is no longer useful. Cast to a set.
+        return new HashSet<Set<V>>(distinctGraphs);
     }
 
     public void addDistinctNeighbours(Map<V, Integer> graphmap, int id, Map<V, E> fringe) {
