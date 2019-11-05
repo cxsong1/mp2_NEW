@@ -427,7 +427,21 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a set of vertices that are within range of v (this set does not contain v).
      */
     public Set<V> search(V v, int range) {
-        return null;
+        Set<V> nearby = new HashSet<V>();
+
+        for (V v2 : vList) {
+            if (v2.equals(v)) {
+                continue;
+            }
+
+            int length = pathLength(shortestPath(v, v2));
+
+            if (length <= range) {
+                nearby.add(v2);
+            }
+        }
+
+        return maxd;
     }
 
     /**
@@ -442,15 +456,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     public int diameter() {
         int maxd = 0;
-        for (V v1 : allVertices()) {
-            for (V v2 : allVertices()) {
-                if (v1.equals(v2)) {
-                    continue;
-                }
 
-                System.out.println("Computing length for verticies " + v1.name() + " and " + v2.name());
+        for (int i = 1; i < vList.size(); i++) {
+            for (int j = 0; j < i; j++) {
+                int length = pathLength(shortestPath(vList.get(i), vList.get(j)));
 
-                int length = pathLength(shortestPath(v1, v2));
                 if (length > maxd) {
                     maxd = length;
                 }
@@ -458,6 +468,54 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         }
 
         return maxd;
+    }
+
+    /**
+     * Returns a set of sets where each subset represents all verticies in an
+     * unbroken graph.
+     *
+     * TODO: Rep invariant
+     * @return each unbroken graph, contained in a set of sets.
+     */
+    public Set<Set<V>> shatter() {
+        Map<V, Integer> graphmap = new HashMap<>();
+        int currentGraph = -1;
+
+        for (V v : allVertices()) {
+            graphmap.add(v, -1);
+        }
+
+        for (V v : allVertices()) {
+            if (graphmap.get(v) == -1) {
+                currentGraph++;
+                graphmap.put(v, currentGraph);
+                addDistinctNeighbours(graphmap, currentGraph, getNeighbours(v));
+            }
+        }
+
+        // Once the loop above terminates, we know that each graph fragment has been
+        // given an id.
+    }
+
+    public void addDistinctNeighbours(Map<V, Integer> graphmap, int id, Map<V, E> fringe) {
+        if (fringe.size() == 0) {
+            return;
+        }
+
+        for (V v : fringe.keySet()) {
+            graphmap.put(v, id);
+
+            Map<V, E> candidates = v.getNeighbours();
+
+            // Remove already associated verticies from the new fringe
+            for (V v2 : candidates.keySet()) {
+                if (graphmap.get(v2) != -1) {
+                    candidates.remove(v2);
+                }
+            }
+            
+            addDistinctNeighbours(graphmap, id, candidates);
+        }
     }
 
     /**
