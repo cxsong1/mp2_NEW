@@ -270,6 +270,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             else
                 vertexLengths.put(v, -1);
         }
+        
 
         // This loop iterates until we find a path that connects us to the sink.
         while (!current.equals(sink)) {
@@ -278,17 +279,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             // For each vertex we haven't yet traversed, compute
             // a preliminary distance estimate, and update if it is
             // better than the current value.
-            for (V v : neighbourhood.keySet()) {
-                if (!visited.contains(v)) {
-                    int possibleLength = vertexLengths.get(current) + neighbourhood.get(v).length();
-                    int currentLength = vertexLengths.get(v);
-
-                    if (possibleLength < currentLength || currentLength == -1) {
-                        vertexLengths.put(v, possibleLength);
-                        lengthSources.put(v, current);
-                    }
-                }
-            }
+            updateDistanceEstimates(neighbourhood, visited, vertexLengths, lengthSources, current);
 
             V closest = null;
             // The starting value of shortestLength doesn't matter - it will be overridden
@@ -331,6 +322,34 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         path.addFirst(source);
 
         return path;
+    }
+
+    /**
+     * Given a current vertex, updates the distances to its neighbours if it is
+     * closer to reach them through the current vertex than whatever path they had previously taken.
+     *
+     * Side effects:
+     *          Updates the length source of the neighbours to current, if their distance is improved
+     *
+     * @param neighbourhood : The verticies adjacent to current, mapped to the edge that connects them.
+     * @param visited : The set of verticies that have already been visited
+     * @param vertexLengths : The map of verticies to current distance estimates
+     * @param lengthSources : Each vertex is mapped to the vertex that gave it a length estimate.
+     */
+    public void updateDistanceEstimates(Map<V, E> neighbourhood, Set<V> visited,
+            Map<V, Integer> vertexLengths, Map<V, V> lengthSources, V current) {
+
+            for (V v : neighbourhood.keySet()) {
+                if (!visited.contains(v)) {
+                    int possibleLength = vertexLengths.get(current) + neighbourhood.get(v).length();
+                    int currentLength = vertexLengths.get(v);
+
+                    if (possibleLength < currentLength || currentLength == -1) {
+                        vertexLengths.put(v, possibleLength);
+                        lengthSources.put(v, current);
+                    }
+                }
+            }
     }
 
     /**
