@@ -334,6 +334,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a list of edges that forms a minimum spanning tree of the graph
      */
     public List<E> minimumSpanningTree() {
+        Set<Set<V>> subgraphs = shatter();
+
+        if (subgraphs.size() > 1) {
+            throw new IllegalArgumentException();
+        }
+
         List<List<V>> forest = new ArrayList<List<V>>();
         Set<E> pool = new HashSet<>();
         List<E> used = new ArrayList<E>();
@@ -390,6 +396,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         return used;
     }
 
+    /**
+     * Given a vertex v, and a set of sets of verticies, return the subset
+     * that contains v.
+     *
+     * @returns the subset containing v.
+     */
     private List<V> getContainer(List<List<V>> containerSet, V vertex) {
         for (List<V> container : containerSet) {
             if (container.contains(vertex)) {
@@ -427,21 +439,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a set of vertices that are within range of v (this set does not contain v).
      */
     public Set<V> search(V v, int range) {
-        Set<V> nearby = new HashSet<V>();
-
-        for (V v2 : vList) {
-            if (v2.equals(v)) {
-                continue;
-            }
-
-            int length = pathLength(shortestPath(v, v2));
-
-            if (length <= range) {
-                nearby.add(v2);
-            }
-        }
-
-        return maxd;
+        // TODO
+        return null;
     }
 
     /**
@@ -455,11 +454,32 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return the diameter of the graph.
      */
     public int diameter() {
-        int maxd = 0;
+        Set<Set<V>> subgraphs = shatter();
 
-        for (int i = 1; i < vList.size(); i++) {
+        List<Integer> diameters = new ArrayList<>();
+
+        for (Set<V> subgraph : subgraphs) {
+            diameters.add(diameter(subgraph));
+        }
+
+        return Collections.max(diameters);
+    }
+
+    /**
+     * Computes the diameter of a subgraph. All the verticies in the subgraph
+     * are assumed to be contained within this graph.
+     *
+     * @return the diameter of the subgraph
+     */
+    public int diameter(Set<V> subgraph) {
+        int maxd = 0;
+        // Working with an arraylist allows us to only compute unique cartesian
+        // products, which lets us halve the run time of this algorithm
+        List<V> indexedGraph = new ArrayList<>(subgraph);
+
+        for (int i = 1; i < subgraph.size(); i++) {
             for (int j = 0; j < i; j++) {
-                int length = pathLength(shortestPath(vList.get(i), vList.get(j)));
+                int length = pathLength(shortestPath(indexedGraph.get(i), indexedGraph.get(j)));
 
                 if (length > maxd) {
                     maxd = length;
@@ -482,7 +502,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         int currentGraph = -1;
 
         for (V v : allVertices()) {
-            graphmap.add(v, -1);
+            graphmap.put(v, -1);
         }
 
         for (V v : allVertices()) {
@@ -504,7 +524,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
         for (V v : allVertices()) {
             // Separate the graphmap into subgraphs.
-            distinctGraphs.get(graphmap.get(v)).put(v);
+            distinctGraphs.get(graphmap.get(v)).add(v);
         }
 
         // The index information in the list is no longer useful. Cast to a set.
@@ -519,13 +539,18 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         for (V v : fringe.keySet()) {
             graphmap.put(v, id);
 
-            Map<V, E> candidates = v.getNeighbours();
+            Map<V, E> candidates = getNeighbours(v);
+            Set<V> removable = new HashSet<V>();
 
             // Remove already associated verticies from the new fringe
             for (V v2 : candidates.keySet()) {
                 if (graphmap.get(v2) != -1) {
-                    candidates.remove(v2);
+                    removable.add(v2);
                 }
+            }
+
+            for (V v2 : removable) {
+                candidates.remove(v2);
             }
             
             addDistinctNeighbours(graphmap, id, candidates);
