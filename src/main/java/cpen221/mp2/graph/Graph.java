@@ -242,8 +242,15 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return the vertices, in order, on the shortest path from source to sink (both end points are part of the list)
      */
     public List<V> shortestPath(V source, V sink) {
+        Set<V> graph = getContainer(shatter(), source);
+
+        if (!graph.contains(sink)) {
+            throw new IllegalArgumentException("Source and sink have no connection!");
+        }
+
         V current = source;
         Set<V> visited = new HashSet<>();
+
         HashMap<V, Integer> vertexLengths = new HashMap<>();
         // When a new preliminary weight is calculated, this hashmap
         // will store the vertex that gave it that weight as a value, and
@@ -257,13 +264,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
         // Each vertex should be initialized with an infinite distance estimate.
         // However, we use negative one as a way to represent that.
-        for (V v : allVertices()) {
+        for (V v : graph) {
             if(v.equals(source))
                 vertexLengths.put(v,0);
             else
                 vertexLengths.put(v, -1);
         }
-
 
         // This loop iterates until we find a path that connects us to the sink.
         while (!current.equals(sink)) {
@@ -290,7 +296,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             int shortestLength = -1;
 
             // Find the neighbour vertex with the smallest distance from the source.
-            for (V v : allVertices()) {
+            for (V v : graph) {
                 if(visited.contains(v)) {
                     continue;
                 }
@@ -400,10 +406,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Given a vertex v, and a set of sets of verticies, return the subset
      * that contains v.
      *
-     * @returns the subset containing v.
+     * type params:
+     * - C is the type of the subsets - that is, it is a collection of Verticies
+     * - S is the type of the Collection of C's.
+     *
+     * @returns the subset, of type C, containing v.
      */
-    private List<V> getContainer(List<List<V>> containerSet, V vertex) {
-        for (List<V> container : containerSet) {
+    private <C extends Collection<V>, S extends Collection<C>> C getContainer(S containers, V vertex) {
+        for (C container : containers) {
             if (container.contains(vertex)) {
                 return container;
             }
@@ -439,7 +449,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a set of vertices that are within range of v (this set does not contain v).
      */
     public Set<V> search(V v, int range) {
-        // TODO
         return null;
     }
 
