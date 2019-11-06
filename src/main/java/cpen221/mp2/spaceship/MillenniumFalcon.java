@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Stack;
 import java.util.NoSuchElementException;
 
 /**
@@ -26,76 +27,38 @@ public class MillenniumFalcon implements Spaceship {
 
     @Override
     public void hunt(HunterStage state) {
-        Set<Integer> traps = new HashSet<>();
-        Map<PlanetStatus, Integer> visits = new HashMap<>();
-        int iteration = 0;
+        Set<Integer> discovered = new HashSet<>();
+        Stack<Integer> stack = new Stack<>();
+        Map<Integer, Integer> roots = new HashMap<>();
 
-        while (iteration++ < 10000 && !state.onKamino()) {
-            PlanetStatus[] neighbours = state.neighbors();
+        int earth = state.currentID();
 
-            if (neighbours.length == 1) {
-                traps.add(state.currentID());
-                state.moveTo(neighbours[0].id());
+        stack.push(state.currentID());
+
+        while (!state.onKamino()) {
+            int id = stack.pop();
+
+            if (id != earth) {
+                state.moveTo(id);
+            }
+
+            PlanetStatus[] neighbors = state.neighbors();
+
+            if (neighbors.length == 1) {
+                state.moveTo(roots.get(id));
                 continue;
             }
 
-            Set<PlanetStatus> good = new HashSet<>();
-            Set<PlanetStatus> bad = new HashSet<>();
+            if (!discovered.contains(id)) {
+                discovered.add(id);
 
-            for (PlanetStatus p : neighbours) {
-                if (visits.containsKey(p)) {
-                    if (iteration - visits.get(p) < 100) {
-                        bad.add(p);
+                for (PlanetStatus n : neighbors) {
+                    if (discovered.contains(n.id())) {
                         continue;
                     }
-                }
 
-                good.add(p);
-            }
-
-            PlanetStatus bestGood = null;
-            PlanetStatus bestBad = null;
-            int trapCount = 0;
-
-            for (PlanetStatus p : good) {
-                if (bestGood == null || p.signal() > bestGood.signal()) {
-                    bestGood = p;
-                }
-            }
-
-            for (PlanetStatus p : good) {
-                if (traps.contains(p)) {
-                    trapCount++;
-                    continue;
-                }
-
-                if (bestGood == null || p.signal() > bestGood.signal()) {
-                    bestGood = p;
-                    continue;
-                }
-
-                if (bestBad == null || p.signal() > bestBad.signal()) {
-                    bestBad = p;
-                }
-            }
-
-            if (trapCount == neighbours.length - 1) {
-                traps.add(state.currentID());
-            }
-
-            if (bestGood != null) {
-                state.moveTo(bestGood.id());
-                visits.put(bestGood, iteration);
-            } else if (bestBad != null) {
-                state.moveTo(bestBad.id());
-                visits.put(bestBad, iteration);
-            } else {
-                for (PlanetStatus p : neighbours) {
-                    if (!traps.contains(p.id())) {
-                        state.moveTo(p.id());
-                        visits.put(p, iteration);
-                        break;
-                    }
+                    stack.push(n.id());
+                    roots.put(id, n.id());
                 }
             }
         }
