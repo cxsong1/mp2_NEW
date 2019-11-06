@@ -26,51 +26,77 @@ public class MillenniumFalcon implements Spaceship {
 
     @Override
     public void hunt(HunterStage state) {
-        Map<PlanetStatus, Integer> lastVisit = new HashMap<>();
-        Map<PlanetStatus, Integer> visitCount = new HashMap<>();
+        Set<Integer> traps = new HashSet<>();
+        Map<PlanetStatus, Integer> visits = new HashMap<>();
         int iteration = 0;
 
-        while (iteration < 1000 && !state.onKamino()) {
+        while (iteration++ < 10000 && !state.onKamino()) {
             PlanetStatus[] neighbours = state.neighbors();
-            Set<PlanetStatus> candidates = new HashSet<>();
-            Set<PlanetStatus> poorCandidates = new HashSet<>();
-            
-            for (PlanetStatus p : neighbours) {
-                if (lastVisit.containsKey(p)) {
-                    if (iteration - lastVisit.get(p) >= 40) {
-                        poorCandidates.add(p);
-                    }
-                } else {
-                    candidates.add(p);
-                }
-            }
 
-            PlanetStatus best = null;
-            PlanetStatus bestWorst = null;
-
-            for (PlanetStatus p : candidates) {
-                if (best == null || p.signal() > best.signal()) {
-                    best = p;
-                }
-            }
-
-            for (PlanetStatus p : poorCandidates) {
-                if (bestWorst == null || p.signal() > bestWorst.signal()) {
-                    bestWorst = p;
-                }
-            }
-
-            iteration++;
-
-            if (best != null) {
-                state.moveTo(best.id());
-                lastVisit.put(best, iteration);
-            } else if (bestWorst != null) {
-                state.moveTo(bestWorst.id());
-                lastVisit.put(bestWorst, iteration);
-            } else {
+            if (neighbours.length == 1) {
+                traps.add(state.currentID());
                 state.moveTo(neighbours[0].id());
-                lastVisit.put(neighbours[0], iteration);
+                continue;
+            }
+
+            Set<PlanetStatus> good = new HashSet<>();
+            Set<PlanetStatus> bad = new HashSet<>();
+
+            for (PlanetStatus p : neighbours) {
+                if (visits.containsKey(p)) {
+                    if (iteration - visits.get(p) < 100) {
+                        bad.add(p);
+                        continue;
+                    }
+                }
+
+                good.add(p);
+            }
+
+            PlanetStatus bestGood = null;
+            PlanetStatus bestBad = null;
+            int trapCount = 0;
+
+            for (PlanetStatus p : good) {
+                if (bestGood == null || p.signal() > bestGood.signal()) {
+                    bestGood = p;
+                }
+            }
+
+            for (PlanetStatus p : good) {
+                if (traps.contains(p)) {
+                    trapCount++;
+                    continue;
+                }
+
+                if (bestGood == null || p.signal() > bestGood.signal()) {
+                    bestGood = p;
+                    continue;
+                }
+
+                if (bestBad == null || p.signal() > bestBad.signal()) {
+                    bestBad = p;
+                }
+            }
+
+            if (trapCount == neighbours.length - 1) {
+                traps.add(state.currentID());
+            }
+
+            if (bestGood != null) {
+                state.moveTo(bestGood.id());
+                visits.put(bestGood, iteration);
+            } else if (bestBad != null) {
+                state.moveTo(bestBad.id());
+                visits.put(bestBad, iteration);
+            } else {
+                for (PlanetStatus p : neighbours) {
+                    if (!traps.contains(p.id())) {
+                        state.moveTo(p.id());
+                        visits.put(p, iteration);
+                        break;
+                    }
+                }
             }
         }
     }
