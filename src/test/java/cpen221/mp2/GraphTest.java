@@ -166,7 +166,22 @@ public class GraphTest {
 
     @Test
     public void testDistinctVertex3(){
+	    Vertex v1 = new Vertex(1, "A");
+	    Vertex v2 = new Vertex(2, "B");
+	    Vertex v3 = new Vertex(3, "C");
+	    Vertex v4 = new Vertex(4, "D");
+	    Vertex v5 = new Vertex(5, "E");
 
+	    Edge e1 = new Edge(v1,v2,1);
+	    Edge e2 = new Edge(v4,v3,1);
+	    Edge e3 = new Edge(v4,v2,1);
+	    Edge e4 = new Edge(v4,v1,1);
+	    Edge e5 = new Edge(v1,v5,1);
+	    Edge e6 = new Edge(v2,v5,1);
+
+	    assertEquals(v1, e1.distinctVertex(e2));
+	    assertEquals(v2, e3.distinctVertex(e4));
+	    assertEquals(v1, e5.distinctVertex(e6));
     }
 
     /**
