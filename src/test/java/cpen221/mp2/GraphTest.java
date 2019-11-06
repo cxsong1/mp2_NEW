@@ -5,10 +5,7 @@ import cpen221.mp2.graph.Graph;
 import cpen221.mp2.graph.Vertex;
 import org.junit.Test;
 
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.Map;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -107,6 +104,69 @@ public class GraphTest {
 
         assertTrue(e1.intersects(e2));
         assertFalse(e1.intersects(null));
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void testIntersection() throws NoSuchElementException{
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
+
+        Edge e1 = new Edge(v1,v2,1);
+        Edge e2 = new Edge(v1,v3,1);
+        assertEquals(v1, e1.intersection(null));
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void testIntersection2() throws NoSuchElementException{
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
+        Vertex v4 = new Vertex(4, "D");
+
+        Edge e1 = new Edge(v1,v2,1);
+        Edge e2 = new Edge(v4,v3,1);
+        assertEquals(v1, e1.intersection(e2));
+    }
+
+    @Test
+    public void testIntersection3(){
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
+
+        Edge e1 = new Edge(v1,v2,1);
+        Edge e2 = new Edge(v1,v3,1);
+        Edge e3 = new Edge(v1,v2,1);
+        Edge e4 = new Edge(v3,v2,1);
+
+        assertEquals(v1,e1.intersection(e2));
+        assertEquals(v2, e3.intersection(e4));
+    }
+
+    @Test
+    public void testDistinctVertex(){
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+
+        Edge e1 = new Edge(v1,v2,1);
+
+        assertEquals(v1, e1.distinctVertex(v2));
+        assertEquals(v2, e1.distinctVertex(v1));
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void testDistinctVertex2() throws NoSuchElementException{
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Edge e1 = new Edge(v1,v2,1);
+        Edge e2 = new Edge(v1,v2,1);
+        assertEquals(v1, e1.distinctVertex(e2));
+    }
+
+    @Test
+    public void testDistinctVertex3(){
+
     }
 
     /**
