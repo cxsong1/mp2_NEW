@@ -18,6 +18,10 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Stack;
 import java.util.NoSuchElementException;
+import java.util.Comparator;
+import java.util.Collections;
+import java.util.Arrays;
+import java.lang.Math;
 
 /**
  * An instance implements the methods needed to complete the mission.
@@ -41,7 +45,10 @@ public class MillenniumFalcon implements Spaceship {
         discovered.add(id);
 
         //TODO: organize neighbors so that the best one is chosen first
-        for (PlanetStatus p2 : hState.neighbors()) {
+        List<PlanetStatus> neighbors = Arrays.asList(hState.neighbors());
+        Collections.sort(neighbors, new SignalComparator());
+
+        for (PlanetStatus p2 : neighbors) {
             if (!discovered.contains(p2.id())) {
                 if (hState.onKamino()) {
                     return;
@@ -55,6 +62,13 @@ public class MillenniumFalcon implements Spaceship {
                 }
                 hState.moveTo(id);
             }
+        }
+    }
+
+    private class SignalComparator implements Comparator<PlanetStatus> {
+        @Override
+        public int compare(PlanetStatus p1, PlanetStatus p2) {
+            return (int) Math.signum(p2.signal() - p1.signal());
         }
     }
 
