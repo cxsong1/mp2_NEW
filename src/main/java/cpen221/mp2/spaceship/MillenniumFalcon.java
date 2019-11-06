@@ -62,8 +62,12 @@ public class MillenniumFalcon implements Spaceship {
     public void gather(GathererStage state) {
         ImGraph graph = state.planetGraph();
         List<Planet> path = graph.shortestPath(state.currentPlanet(), state.earth());
+        Planet kamino = state.currentPlanet();
 
         for (Planet p : path) {
+            if (p.equals(kamino)) {
+                continue;
+            }
             state.moveTo(p);
         }
     }
