@@ -489,4 +489,35 @@ public class GraphTest {
 
         System.out.println(g.diameter());
     }
+
+    @Test
+    public void testCreateVertex() {
+        Vertex v = new Vertex(1, "A");
+        assertEquals(1, v.id());
+        assertEquals("A", v.name());
+    }
+
+    @Test
+    public void testVertexEquals() {
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(5, "F");
+        Vertex v3 = new Vertex(3, "B");
+        Vertex v4 = new Vertex(1, "A");
+
+        assertEquals(v1, v4);
+        assertNotEquals(v1, v2);
+        assert(v2.hashCode() != v3.hashCode());
+        assert(v1.hashCode() == v4.hashCode());
+        assertTrue(v1.equals(v4));
+        assertTrue(v4.equals(v1));
+    }
+
+    @Test
+    public void testUpdateName() {
+        Vertex v1 = new Vertex(1, "name1");
+        assertEquals(v1.name(), "name1");
+
+        v1.updateName("name2");
+        assertEquals(v1.name(), "name2");
+    }
 }
