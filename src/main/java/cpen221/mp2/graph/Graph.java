@@ -265,10 +265,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         // Each vertex should be initialized with an infinite distance estimate.
         // However, we use negative one as a way to represent that.
         for (V v : graph) {
-            if(v.equals(source))
-                vertexLengths.put(v,0);
-            else
+            if(v.equals(source)) {
+                vertexLengths.put(v, 0);
+            } else {
                 vertexLengths.put(v, -1);
+            }
         }
         
 
@@ -407,7 +408,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
                 if (container1.equals(container2)) {
                     removable.add(e);
-                    continue;
                 } else {
                     if (e.length() < shortest || shortestEdge == null) {
                         shortest = e.length();

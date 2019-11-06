@@ -195,4 +195,35 @@ public class TestUtils {
 
 		return g;
 	}
+
+	public static Graph<Vertex, Edge<Vertex>> createGraph7() {
+
+		Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+
+		Vertex A = new Vertex(1, "A");
+		Vertex B = new Vertex(2, "B");
+		Vertex C = new Vertex(3, "C");
+		Vertex D = new Vertex(4, "D");
+
+		Edge<Vertex> e1 = new Edge<>(A,B,1);
+		Edge<Vertex> e2 = new Edge<>(A,C,1);
+		Edge<Vertex> e3 = new Edge<>(B,D,1);
+		Edge<Vertex> e4 = new Edge<>(C,D,1);
+		Edge<Vertex> e5 = new Edge<>(B,C,2);
+		Edge<Vertex> e6 = new Edge<>(A,D,2);
+
+		g.addVertex(A);
+		g.addVertex(B);
+		g.addVertex(C);
+		g.addVertex(D);
+
+		g.addEdge(e1);
+		g.addEdge(e2);
+		g.addEdge(e3);
+		g.addEdge(e4);
+		g.addEdge(e5);
+		g.addEdge(e6);
+
+		return g;
+	}
 }

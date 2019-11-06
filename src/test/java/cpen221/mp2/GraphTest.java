@@ -72,6 +72,7 @@ public class GraphTest {
         assertEquals(5, g.edgeLength(v1, v2));
         assertEquals(7, g.edgeLength(v2, v3));
         assertEquals(9, g.edgeLength(v1, v4));
+        assertEquals(-1, g.edgeLength(v1,v3));
     }
 
     @Test
@@ -185,11 +186,12 @@ public class GraphTest {
     @Test
     public void testAddEdge(){
         Graph g = TestUtils.createGraph2();
-        Vertex v6 = new Vertex(6, "Horseradish actually sucks");
         Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
 
-        assertTrue(g.addVertex(v6));
-        assertFalse(g.addVertex(v1));
+        assertFalse(g.addEdge(new Edge<>(v1, v2, 5)));
+        assertTrue(g.addEdge(new Edge<>(v1,v3,2)));
     }
 
     /** testRemove1()
@@ -292,6 +294,51 @@ public class GraphTest {
         assertEquals(length, 12);
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    public void testMST2() throws IllegalArgumentException{
+        Graph g = TestUtils.createGraph1();
+
+        assertEquals(-1, g.minimumSpanningTree());
+    }
+
+    @Test
+    public void testMST3(){
+        Graph g = TestUtils.createGraph7();
+        Vertex A = new Vertex(1, "A");
+        Vertex B = new Vertex(2, "B");
+        Vertex C = new Vertex(3, "C");
+        Vertex D = new Vertex(4, "D");
+
+        Edge<Vertex> e1 = new Edge<>(A,B,1);
+        Edge<Vertex> e2 = new Edge<>(A,C,1);
+        Edge<Vertex> e3 = new Edge<>(B,D,1);
+        Edge<Vertex> e4 = new Edge<>(C,D,1);
+
+        List<Edge> mst = g.minimumSpanningTree();
+
+        //assertEquals(4, mst.size());
+        assertTrue(mst.contains(e1));
+        assertTrue(mst.contains(e2));
+        assertTrue(mst.contains(e3));
+        assertTrue(mst.contains(e4));
+
+        int length = 0;
+        for (Edge e : mst) {
+            length += e.length();
+        }
+
+        assertEquals(length, 4);
+    }
+
+    @Test
+    public void testGetEdge(){
+        Graph g = TestUtils.createGraph2();
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v3 = new Vertex(3, "C");
+
+        assertEquals(null, g.getEdge(v1,v3));
+    }
+
     @Test
     public void testShortestPath(){
         Graph<Vertex, Edge<Vertex>> g = TestUtils.createGraph5();
@@ -308,6 +355,16 @@ public class GraphTest {
         path.add(F);
 
         assertEquals(path, g.shortestPath(A,F));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testShortestPath2() throws IllegalArgumentException{
+        Graph g = TestUtils.createGraph1();
+
+        Vertex A = new Vertex(1, "A");
+        Vertex C = new Vertex(3, "C");
+
+        assertEquals(-1, g.shortestPath(A,C));
     }
 
     @Test
