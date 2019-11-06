@@ -281,28 +281,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             // better than the current value.
             updateDistanceEstimates(neighbourhood, visited, vertexLengths, lengthSources, current);
 
-            V closest = null;
-            // The starting value of shortestLength doesn't matter - it will be overridden
-            // if closest is null anyway.
-            int shortestLength = -1;
-
-            // Find the neighbour vertex with the smallest distance from the source.
-            for (V v : graph) {
-                if(visited.contains(v)) {
-                    continue;
-                }
-
-                int length = vertexLengths.get(v);
-
-                if (length == -1) {
-                    continue;
-                }
-
-                if (closest == null || shortestLength > length) {
-                    closest = v;
-                    shortestLength = length;
-                }
-            }
+            V closest = getClosestNeighbour(graph, visited, vertexLengths);
 
             visited.add(closest);
 
@@ -337,19 +316,57 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param lengthSources : Each vertex is mapped to the vertex that gave it a length estimate.
      */
     public void updateDistanceEstimates(Map<V, E> neighbourhood, Set<V> visited,
-            Map<V, Integer> vertexLengths, Map<V, V> lengthSources, V current) {
+        Map<V, Integer> vertexLengths, Map<V, V> lengthSources, V current) {
 
-            for (V v : neighbourhood.keySet()) {
-                if (!visited.contains(v)) {
-                    int possibleLength = vertexLengths.get(current) + neighbourhood.get(v).length();
-                    int currentLength = vertexLengths.get(v);
+        for (V v : neighbourhood.keySet()) {
+            if (!visited.contains(v)) {
+                int possibleLength = vertexLengths.get(current) + neighbourhood.get(v).length();
+                int currentLength = vertexLengths.get(v);
 
-                    if (possibleLength < currentLength || currentLength == -1) {
-                        vertexLengths.put(v, possibleLength);
-                        lengthSources.put(v, current);
-                    }
+                if (possibleLength < currentLength || currentLength == -1) {
+                    vertexLengths.put(v, possibleLength);
+                    lengthSources.put(v, current);
                 }
             }
+        }
+    }
+
+    /**
+     * Finds the next viable vertex for Dijkstra's algorithm to step to. More specifically,
+     * of all the verticies who have a preliminary length but have not been visited, return
+     * the one with the shortest length.
+     *
+     * @param graph : The set of verticies that comprise the contiguous graph we're looking in.
+     * @param visited : The set of verticies that have already been visited
+     * @param vertexLengths : The map of verticies to current distance estimates
+     *
+     * @
+     */
+    public V getClosestNeighbour(Set<V> graph, Set<V> visited, Map<V, Integer> vertexLengths) {
+        // The starting value of shortestLength doesn't matter - it will be overridden
+        // if closest is null anyway.
+        int shortestLength = -1;
+        V closest = null;
+
+        // Find the neighbour vertex with the smallest distance from the source.
+        for (V v : graph) {
+            if(visited.contains(v)) {
+                continue;
+            }
+
+            int length = vertexLengths.get(v);
+
+            if (length == -1) {
+                continue;
+            }
+
+            if (closest == null || shortestLength > length) {
+                closest = v;
+                shortestLength = length;
+            }
+        }
+
+        return closest;
     }
 
     /**
@@ -468,7 +485,19 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a set of vertices that are within range of v (this set does not contain v).
      */
     public Set<V> search(V v, int range) {
-        return null;
+        Set<Set<V>> graphs = shatter();
+        Set<V> graph = getContainer(graphs, v);
+        Set<V> close = new HashSet<V>();
+
+        graph.remove(v);
+
+        for (V v2 : graph) {
+            if (pathLength(shortestPath(v2, v)) <= range) {
+                close.add(v2);
+            }
+        }
+
+        return close;
     }
 
     /**
