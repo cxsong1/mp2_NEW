@@ -25,41 +25,35 @@ import java.util.NoSuchElementException;
 public class MillenniumFalcon implements Spaceship {
     long startTime = System.nanoTime(); // start time of rescue phase
 
+    private HunterStage hState = null;
+    private Set<Integer> discovered = new HashSet<>();
+    private int earthid = 0;
+
     @Override
     public void hunt(HunterStage state) {
-        Set<Integer> discovered = new HashSet<>();
-        Stack<Integer> stack = new Stack<>();
-        Map<Integer, Integer> roots = new HashMap<>();
+        hState = state;
+        earthid = state.currentID();
 
-        int earth = state.currentID();
+        DFS(earthid);
+    }
 
-        stack.push(state.currentID());
+    private void DFS(int id) {
+        discovered.add(id);
 
-        while (!state.onKamino()) {
-            int id = stack.pop();
-
-            if (id != earth) {
-                state.moveTo(id);
-            }
-
-            PlanetStatus[] neighbors = state.neighbors();
-
-            if (neighbors.length == 1) {
-                state.moveTo(roots.get(id));
-                continue;
-            }
-
-            if (!discovered.contains(id)) {
-                discovered.add(id);
-
-                for (PlanetStatus n : neighbors) {
-                    if (discovered.contains(n.id())) {
-                        continue;
-                    }
-
-                    stack.push(n.id());
-                    roots.put(id, n.id());
+        //TODO: organize neighbors so that the best one is chosen first
+        for (PlanetStatus p2 : hState.neighbors()) {
+            if (!discovered.contains(p2.id())) {
+                if (hState.onKamino()) {
+                    return;
                 }
+                hState.moveTo(p2.id());
+
+                DFS(p2.id());
+
+                if (hState.onKamino()) {
+                    return;
+                }
+                hState.moveTo(id);
             }
         }
     }
