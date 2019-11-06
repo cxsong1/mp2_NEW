@@ -118,6 +118,3 @@ public class Edge<V extends Vertex> {
 
 }
 
-//tree is a list of edges
-    //tree for every vertex
-//forest is a set of lists of edges
