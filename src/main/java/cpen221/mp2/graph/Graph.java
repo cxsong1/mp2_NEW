@@ -454,7 +454,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                 return container;
             }
         }
-
         return null;
     }
 
@@ -482,7 +481,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param v     the vertex to start the search from.
      * @param range the radius of the search.
-     * @return a set of vertices that are within range of v (this set does not contain v).
+     * @return a set of vertices that are within range of v inclusive (this set does not contain v).
      */
     public Set<V> search(V v, int range) {
         Set<Set<V>> graphs = shatter();

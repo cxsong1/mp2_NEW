@@ -38,4 +38,34 @@ public class ImGraphTest {
 
 		assertEquals(graphSet, g.shatter());
 	}
+
+	@Test
+	public void testSearch(){
+		Graph g = TestUtils.createGraph1();
+
+		Vertex C = new Vertex(3,"C");
+		Vertex D = new Vertex(4, "D");
+		Vertex E = new Vertex(5, "E");
+
+		Set<Vertex> set = new HashSet<>();
+		set.add(D);
+		set.add(E);
+
+		assertEquals(set, g.search(C,4));
+	}
+
+	@Test
+	public void testSearch2(){
+		Graph g = TestUtils.createGraph6();
+
+		Vertex C = new Vertex(3,"C");
+		Vertex D = new Vertex(4, "D");
+		Vertex F = new Vertex(6, "F");
+
+		Set<Vertex> set = new HashSet<>();
+		set.add(D);
+		set.add(F);
+
+		assertEquals(set, g.search(C,6));
+	}
 }
