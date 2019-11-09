@@ -9,6 +9,14 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 public class ImGraphTest {
+
+	/**
+	 * Tests to ensure that `shatter()`, A method that returns sets of verticies
+	 * that are traversible via the edges provided to the graph, works correctly.
+	 * That is, if witihin some graph, there are two subgraphs A and B, which are
+	 * not connected by any sequence of edges, shatter() must remove A and B as 
+	 * distinct sets of verticies.
+	 */
 	@Test
 	public void testDistinctGraphs(){
 
@@ -39,6 +47,10 @@ public class ImGraphTest {
 		assertEquals(graphSet, g.shatter());
 	}
 
+	/**
+	 * Tests to ensure that search correctly identifies verticies
+	 * that are within `radius` of the start node.
+	 */
 	@Test
 	public void testSearch(){
 		Graph g = TestUtils.createGraph1();
@@ -54,6 +66,10 @@ public class ImGraphTest {
 		assertEquals(set, g.search(C,4));
 	}
 
+	/**
+	 * Tests to ensure that search correctly identifies verticies
+	 * that are within `radius` of the start node.
+	 */
 	@Test
 	public void testSearch2(){
 		Graph g = TestUtils.createGraph6();
