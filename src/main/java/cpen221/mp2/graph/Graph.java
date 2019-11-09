@@ -5,19 +5,37 @@ import java.util.*;
 /**
  * Represents a graph with vertices of type V.
  *
+ * Abstraction function:
+ *      Represents an undirected, weighted graph consisting of verticies and optional
+ *      edges between them. A Graph may contain seperate graphs that are not connected
+ *      by any edges.
+ *
+ * Representation invariant:
+ *      The vertex and edge lists do not contain any duplicates.
+ *      All edges have positive or zero weights.
+ *      Verticies are all indexed differently.
+ *      eList contains all edges in the graph
+ *      vList contains all verticies in the graph
+ *
  * @param <V> represents a vertex type
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
     private List<V> vList;
     private List<E> eList;
 
+    /**
+     * Creates a new instance of Graph.
+     *
+     * This constructor initializes eList and vList, but does not add any elements to them.
+     */
     public Graph() {
         vList = new ArrayList<V>();
         eList = new ArrayList<E>();
     }
 
     /**
-     * Add a vertex to the graph
+     * Add a vertex to the graph. The vertex can only be successfully added if it is not
+     * already in the graph.
      *
      * @param v vertex to add
      * @return true if the vertex was added successfully and false otherwise
@@ -32,7 +50,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     * Check if a vertex is part of the graph
+     * Returns wether or not the vertex provided is contained in the graph.
      *
      * @param v vertex to check in the graph
      * @return true of v is part of the graph and false otherwise
@@ -42,7 +60,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     * Add an edge of the graph
+     * Add an edge to the graph. An edge can only be added successfully if it is
+     * not yet contained in the graph.
      *
      * @param e the edge to add to the graph
      * @return true if the edge was successfully added and false otherwise
@@ -57,7 +76,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     * Check if an edge is part of the graph
+     * Returns wether or not the edge provided is contained in the graph.
      *
      * @param e the edge to check in the graph
      * @return true if e is an edge in the graoh and false otherwise
@@ -67,7 +86,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     * Check if v1-v2 is an edge in the graph
+     * Returns true if there is an edge with end verticies v1 and v2.
      *
      * @param v1 the first vertex of the edge
      * @param v2 the second vertex of the edge
@@ -78,13 +97,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     * Determine the length on an edge in the graph
+     * Returns the length of the edge that spans v1 to v2, or negative one if no
+     * such edge exists.
      *
      * @param v1 the first vertex of the edge
      * @param v2 the second vertex of the edge
      * @return the length of the v1-v2 edge if this edge is part of the graph,
      *         or -1 if the edge is not a part of the graph.
-     * //TODO: Ensure this is allowed ^^^
      */
     public int edgeLength(V v1, V v2) {
         Edge target = new Edge<V>(v1, v2);
@@ -99,7 +118,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     * Obtain the sum of the lengths of all edges in the graph
+     * Obtain the sum of the lengths of all edges in the graph.
      *
      * @return the sum of the lengths of all edges in the graph
      */
@@ -114,7 +133,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     * Remove an edge from the graph
+     * Remove an edge from the graph, returning true if the edge has been removed or
+     * false if it was not contained.
      *
      * @param e the edge to remove
      * @return true if e was successfully removed and false otherwise
@@ -341,7 +361,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param visited : The set of verticies that have already been visited
      * @param vertexLengths : The map of verticies to current distance estimates
      *
-     * @
+     * @return The best candidate vertex
      */
     public V getClosestNeighbour(Set<V> graph, Set<V> visited, Map<V, Integer> vertexLengths) {
         // The starting value of shortestLength doesn't matter - it will be overridden
@@ -374,6 +394,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Compute the minimum spanning tree of the graph.
      * See https://en.wikipedia.org/wiki/Minimum_spanning_tree
      *
+     * @throws IllegalArgumentException if there are multiple disconnected graphs contained
+     *         in this graph. That is, there are verticies who cannot be reached by others.
      * @return a list of edges that forms a minimum spanning tree of the graph
      */
     public List<E> minimumSpanningTree() {
@@ -446,6 +468,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * - C is the type of the subsets - that is, it is a collection of Verticies
      * - S is the type of the Collection of C's.
      *
+     * @param containers : The S containing Cs
+     * @param vertex : The vertex whose direct container we are looking for.
+     *
      * @returns the subset, of type C, containing v.
      */
     private <C extends Collection<V>, S extends Collection<C>> C getContainer(S containers, V vertex) {
@@ -458,13 +483,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     * Compute the length of a given path
+     * Return the sum of the edge lengths between the sequential vertiies in path.
+     * For this method to work, the graph MUST contain sequential edges that connect
+     * all adjacent verticies in path.
      *
      * @param path indicates the vertices on the given path
      * @return the length of path
      */
     public int pathLength(List<V> path) {
-        //TODO: Test me
         V last = path.get(0);
         int accumulator = 0;
 
@@ -523,8 +549,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
     /**
      * Computes the diameter of a subgraph. All the verticies in the subgraph
-     * are assumed to be contained within this graph.
+     * are assumed to be contained within this graph. When the shortest path is
+     * computed between all verticies in the subgraph, the diameter is defined
+     * as the largest of those values.
      *
+     * @param subgraph : the set of verticies we are finding the diameter of.
      * @return the diameter of the subgraph
      */
     public int diameter(Set<V> subgraph) {
@@ -550,7 +579,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Returns a set of sets where each subset represents all verticies in an
      * unbroken graph.
      *
-     * TODO: Rep invariant
      * @return each unbroken graph, contained in a set of sets.
      */
     public Set<Set<V>> shatter() {
@@ -587,6 +615,17 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         return new HashSet<Set<V>>(distinctGraphs);
     }
 
+    /**
+     * Given a hashmap of verticies to integer graph IDs, graph ID we are exploring,
+     * and a map of vertecies and edges to consider, find all verticies that have not
+     * yet been given a graph ID but are connected to the graph we are currently analyzing.
+     *
+     * Used as a subroutine in `shatter`.
+     *
+     * @param graphmap The map of all verticies in this graph and their graph IDs
+     * @param id The current ID of the graph we are analyzing
+     * @param fringe A collection of verticies that are on the fringe of our exploration radius
+     */
     public void addDistinctNeighbours(Map<V, Integer> graphmap, int id, Map<V, E> fringe) {
         if (fringe.size() == 0) {
             return;
