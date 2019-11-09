@@ -6,6 +6,11 @@ import cpen221.mp2.graph.Vertex;
 
 public class TestUtils {
 
+	/**
+	 * Creates a graph containing two distinct sub-graphs
+	 * Used to test ImGraph methods as well as methods that should throw and exception if
+	 *    the graph created is disconnected
+	 * */
 	public static Graph<Vertex, Edge<Vertex>> createGraph1() {
 		Vertex A = new Vertex(1, "A");
 		Vertex B = new Vertex(2, "B");
@@ -37,6 +42,10 @@ public class TestUtils {
 		return g;
 	}
 
+	/**
+	 * General graph used to test majority of IGraph
+	 *
+	 * */
 	public static Graph<Vertex, Edge<Vertex>> createGraph2() {
 		Vertex v1 = new Vertex(1, "A");
 		Vertex v2 = new Vertex(2, "B");
@@ -59,6 +68,10 @@ public class TestUtils {
 		return g;
 	}
 
+	/**
+	 * Additional graph for testing of IGraph methods
+	 * One connected graph
+	 * */
 	public static Graph<Vertex, Edge<Vertex>> createGraph3() {
 		Vertex v1 = new Vertex(1, "A");
 		Vertex v2 = new Vertex(2, "B");
@@ -88,6 +101,10 @@ public class TestUtils {
 		return g2;
 	}
 
+	/**
+	 * Graph used to test MST
+	 * One connected graph
+	 * */
 	public static Graph<Vertex, Edge<Vertex>> createGraph4() {
 		Vertex v1 = new Vertex(1, "a");
 		Vertex v2 = new Vertex(2, "a");
@@ -116,7 +133,10 @@ public class TestUtils {
 		return g;
 	}
 
-	//graph used to test shortest path
+	/**
+	 * Graph used to test shortest path
+	 * One connected graph
+	 * */
 	public static Graph<Vertex, Edge<Vertex>> createGraph5() {
 		Vertex A = new Vertex(1, "A");
 		Vertex B = new Vertex(2, "B");
@@ -165,6 +185,11 @@ public class TestUtils {
 		return g;
 	}
 
+	/**
+	 * Graph used to test search
+	 * One connected graph
+	 * */
+
 	public static Graph<Vertex, Edge<Vertex>> createGraph6() {
 		Vertex A = new Vertex(1, "A");
 		Vertex B = new Vertex(2, "B");
@@ -192,37 +217,6 @@ public class TestUtils {
 		g.addEdge(e3);
 		g.addEdge(e4);
 		g.addEdge(e5);
-
-		return g;
-	}
-
-	public static Graph<Vertex, Edge<Vertex>> createGraph7() {
-
-		Graph<Vertex, Edge<Vertex>> g = new Graph<>();
-
-		Vertex A = new Vertex(1, "A");
-		Vertex B = new Vertex(2, "B");
-		Vertex C = new Vertex(3, "C");
-		Vertex D = new Vertex(4, "D");
-
-		Edge<Vertex> e1 = new Edge<>(A,B,1);
-		Edge<Vertex> e2 = new Edge<>(A,C,1);
-		Edge<Vertex> e3 = new Edge<>(B,D,1);
-		Edge<Vertex> e4 = new Edge<>(C,D,1);
-		Edge<Vertex> e5 = new Edge<>(B,C,2);
-		Edge<Vertex> e6 = new Edge<>(A,D,2);
-
-		g.addVertex(A);
-		g.addVertex(B);
-		g.addVertex(C);
-		g.addVertex(D);
-
-		g.addEdge(e1);
-		g.addEdge(e2);
-		g.addEdge(e3);
-		g.addEdge(e4);
-		g.addEdge(e5);
-		g.addEdge(e6);
 
 		return g;
 	}
