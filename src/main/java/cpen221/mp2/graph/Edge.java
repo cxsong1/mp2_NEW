@@ -11,6 +11,11 @@ import java.util.NoSuchElementException;
  *    The verticies spanned by the edge are not the same (distinct endpoints)
  *    The edge's weight is greater than zero (non-negative weights)
  *    The verticies that comprise the edge cannot be null
+ *    Two edges with identical endpoints have the same hashcode and are equal
+ *    Endpoints are stored as V1 and V2
+ *    Length and endpoints are immutable
+ *    length is stored as an int
+ *
  */
 public class Edge<V extends Vertex> {
 
