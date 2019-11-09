@@ -38,30 +38,6 @@ public class GraphTest {
         assertFalse(g.edge(new Edge(v1, v3)));
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void testEdge3(){
-        Graph g = TestUtils.createGraph2();
-
-        assertTrue(g.edge(new Edge(null,null)));
-    }
-
-    @Test (expected = IllegalArgumentException.class)
-    public void testEdge4(){
-        Graph g = TestUtils.createGraph2();
-        Vertex v1 = new Vertex(1, "A");
-
-        assertTrue(g.edge(new Edge(v1,v1,1)));
-    }
-
-    @Test (expected = IllegalArgumentException.class)
-    public void testEdge5(){
-        Graph g = TestUtils.createGraph2();
-        Vertex v1 = new Vertex(1, "A");
-        Vertex v2 = new Vertex(2, "B");
-
-        assertTrue(g.edge(new Edge(v1,v2,-1)));
-    }
-
     /**
      * Tests that the `edge` method returns true if an edge exists in the graph, and
      * false if that edge is not contained.
@@ -78,6 +54,48 @@ public class GraphTest {
         assertFalse(g.edge(v1, v3));
     }
 
+    /**
+     * Tests that the edge method throws an IllegalArgumentException
+     * if we try and create an edge with null vertices
+     * */
+    @Test (expected = IllegalArgumentException.class)
+    public void testEdge3(){
+        Graph g = TestUtils.createGraph2();
+
+        assertTrue(g.edge(new Edge(null,null)));
+    }
+
+    /**
+     * Tests that the edge method throws an IllegalArgumentException
+     * if we try and create an edge with two vertices that are identical
+     */
+    @Test (expected = IllegalArgumentException.class)
+    public void testEdge4(){
+        Graph g = TestUtils.createGraph2();
+        Vertex v1 = new Vertex(1, "A");
+
+        assertTrue(g.edge(new Edge(v1,v1,1)));
+    }
+
+    /**
+     *Tests that the edge method throws an IllegalArgumentException
+     * if we try and create an edge with a negative length
+     */
+    @Test (expected = IllegalArgumentException.class)
+    public void testEdge5(){
+        Graph g = TestUtils.createGraph2();
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+
+        assertTrue(g.edge(new Edge(v1,v2,-1)));
+    }
+
+    /**
+     * Tests that the incident method returns
+     *      true: for v1, a vertex that is contained on e1
+ *          false: for v3, a vertex that is not on e1
+ *          false: for a null vertex
+     */
     @Test
     public void testIncident(){
         Graph g = TestUtils.createGraph2();
@@ -93,6 +111,11 @@ public class GraphTest {
         assertFalse(e1.incident(null));
     }
 
+    /**
+     * Tests if 'Intersects' method returns
+     *      false: for an intersection with a null vertex
+     *      true: if e1 and e2 have a common vertex
+     */
     @Test
     public void testIntersects(){
         Vertex v1 = new Vertex(1, "A");
@@ -106,6 +129,10 @@ public class GraphTest {
         assertFalse(e1.intersects(null));
     }
 
+    /**
+     * Tests if 'intersection' method throws a NoSuchElementException
+     * if a null edge is passed
+     */
     @Test (expected = NoSuchElementException.class)
     public void testIntersection() throws NoSuchElementException{
         Vertex v1 = new Vertex(1, "A");
@@ -117,6 +144,10 @@ public class GraphTest {
         assertEquals(v1, e1.intersection(null));
     }
 
+    /**
+     * Tests if 'intersection' method throws a NoSuchElementException
+     * if there is no common vertex between two edges
+     */
     @Test (expected = NoSuchElementException.class)
     public void testIntersection2() throws NoSuchElementException{
         Vertex v1 = new Vertex(1, "A");
@@ -129,6 +160,11 @@ public class GraphTest {
         assertEquals(v1, e1.intersection(e2));
     }
 
+    /**
+     * Tests 'intersection' for edges that have a common vertex
+     * Expected: the intersection between e1 and e2 is v1
+     *           the intersection between e3 and e4 is v2
+     */
     @Test
     public void testIntersection3(){
         Vertex v1 = new Vertex(1, "A");
@@ -144,6 +180,10 @@ public class GraphTest {
         assertEquals(v2, e3.intersection(e4));
     }
 
+    /**
+     * Tests 'distinctVertex' method
+     * Expected: the "other" vertex in the edge that is not the one passed to the function
+     */
     @Test
     public void testDistinctVertex(){
         Vertex v1 = new Vertex(1, "A");
@@ -155,6 +195,10 @@ public class GraphTest {
         assertEquals(v2, e1.distinctVertex(v1));
     }
 
+    /**
+     * Tests 'distinctVertex' method that takes an edge as a parameter
+     * Expected: throws NoSuchElementException since e1 and e2 are the same edge
+     */
     @Test (expected = NoSuchElementException.class)
     public void testDistinctVertex2() throws NoSuchElementException{
         Vertex v1 = new Vertex(1, "A");
@@ -164,6 +208,13 @@ public class GraphTest {
         assertEquals(v1, e1.distinctVertex(e2));
     }
 
+    /**
+     * Tests 'distinctVertex' method that takes an edge as a parameter
+     * Expected:
+     *      1) returns v1 since all vertices are distinct
+     *      2) returns v2
+     *      3) returns v1
+     */
     @Test
     public void testDistinctVertex3(){
 	    Vertex v1 = new Vertex(1, "A");
@@ -202,12 +253,21 @@ public class GraphTest {
         assertEquals(-1, g.edgeLength(v1,v3));
     }
 
+    /**
+     * Tests the 'edgeLengthSum' method
+     * Returns the sum of all the lengths of the edges in graph2
+     */
     @Test
     public void testEdgeLengthSum() {
         Graph g = TestUtils.createGraph2();
         assertEquals(21, g.edgeLengthSum());
     }
-    
+
+    /**
+     * Tests 'allEdges' method
+     * Checks to see if the set contains the appropriate
+     * edges and is the correct size
+     */
     @Test
     public void testAllEdges1() {
         Graph g = TestUtils.createGraph2();
@@ -229,6 +289,11 @@ public class GraphTest {
         assertEquals(3, edges.size());
     }
 
+    /**
+     * Second test to test 'allEdges' method
+     * Checks to see if the set contains the appropriate
+     * edges and is the correct size
+     */
     @Test
     public void testAllEdges2() {
         Graph g = TestUtils.createGraph2();
@@ -250,6 +315,11 @@ public class GraphTest {
         assertEquals(2, edges.size());
     }
 
+    /**
+     * Tests 'allVertices' method
+     * Checks to see if the set contains the appropriate
+     * vertices and is the correct size
+     */
     @Test
     public void testAllVertices() {
         Graph g = TestUtils.createGraph2();
@@ -268,6 +338,12 @@ public class GraphTest {
         assertEquals(4, vert.size());
     }
 
+    /**
+     * Tests 'getNeighbours' method
+     * Returns a map containing all the neighbours of vertex v1
+     *      along with the edge connecting the two neighbours
+     *  Check that the value (edge) corresponding to the neighbour vertex (key) is correct
+     */
     @Test
     public void testGetNeighbours() {
         Graph g = TestUtils.createGraph2();
@@ -392,7 +468,11 @@ public class GraphTest {
         assertFalse(g.remove(e6));
         assertTrue(g.remove(e1));
     }
-
+    /**
+     * Tests 'MST' method
+     * Returns a list containing all the edges that form the minimum spanning tree
+     * Check the size of the list and the length of the the minimum spanning tree
+     */
     @Test
     public void testMST() {
         Graph g = TestUtils.createGraph4();
@@ -421,6 +501,10 @@ public class GraphTest {
         assertEquals(length, 12);
     }
 
+    /**
+     *  Tests 'MST' method with a disconnected graph
+     *  Should throw an IllegalArgumentException
+     */
     @Test (expected = IllegalArgumentException.class)
     public void testMST2() throws IllegalArgumentException{
         Graph g = TestUtils.createGraph1();
@@ -428,6 +512,10 @@ public class GraphTest {
         assertEquals(-1, g.minimumSpanningTree());
     }
 
+    /**
+     * Tests the 'getEdge' method on an edge that does not exist in graph
+     * Return: null
+     */
     @Test
     public void testGetEdge(){
         Graph g = TestUtils.createGraph2();
@@ -437,6 +525,10 @@ public class GraphTest {
         assertEquals(null, g.getEdge(v1,v3));
     }
 
+    /**
+     * Tests 'shortestPath' method on complete graph (ie. no sub-graphs)
+     * Returns a LinkedList with all the vertices in the shortest path
+     */
     @Test
     public void testShortestPath(){
         Graph<Vertex, Edge<Vertex>> g = TestUtils.createGraph5();
@@ -455,6 +547,10 @@ public class GraphTest {
         assertEquals(path, g.shortestPath(A,F));
     }
 
+    /**
+     * Tests 'shortestPath' method between two vertices on separate sub-graphs
+     * Should throw an IllegalArgumentException
+     */
     @Test(expected = IllegalArgumentException.class)
     public void testShortestPath2() throws IllegalArgumentException{
         Graph g = TestUtils.createGraph1();
@@ -465,6 +561,10 @@ public class GraphTest {
         assertEquals(-1, g.shortestPath(A,C));
     }
 
+    /**
+     * Test 'diameter' method on graph 5
+     * Returns 13
+     * */
     @Test
     public void testDiameter() {
         Graph g = TestUtils.createGraph5();
@@ -473,9 +573,13 @@ public class GraphTest {
         Vertex D = new Vertex(4, "D");
         Vertex F = new Vertex(6, "F");
 
-        System.out.println(g.diameter());
+        assertEquals(13, g.diameter());
     }
 
+    /**
+     * Tests 'createVertex' method
+     * Should return true for both vertices
+     */
     @Test
     public void testCreateVertex() {
         Vertex v = new Vertex(1, "A");
@@ -483,6 +587,9 @@ public class GraphTest {
         assertEquals("A", v.name());
     }
 
+    /**
+     * Test to check if two vertices are equal both using hashcode and equals method
+     */
     @Test
     public void testVertexEquals() {
         Vertex v1 = new Vertex(1, "A");
@@ -498,6 +605,10 @@ public class GraphTest {
         assertTrue(v4.equals(v1));
     }
 
+    /**
+     * Tests 'updateName' method to check if a vertex name change was succesful
+     * Should return true both times
+     */
     @Test
     public void testUpdateName() {
         Vertex v1 = new Vertex(1, "name1");
