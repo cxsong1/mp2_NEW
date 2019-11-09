@@ -2,6 +2,16 @@ package cpen221.mp2.graph;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Describes an edge that connects to verticies in a weighted, undirected graph.
+ *
+ * AF:
+ *    Describes an edge that connects two verticies in a weighted, undirected graph.
+ * RI:
+ *    The verticies spanned by the edge are not the same (distinct endpoints)
+ *    The edge's weight is greater than zero (non-negative weights)
+ *    The verticies that comprise the edge cannot be null
+ */
 public class Edge<V extends Vertex> {
 
     private V v1;
